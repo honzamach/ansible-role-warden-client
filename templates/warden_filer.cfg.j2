@@ -1,0 +1,46 @@
+//---------------------- <+++ansible-managed-file+++> -------------------------+
+//
+//                           IMPORTANT WARNING
+//
+//   This file is managed remotely by Ansible orchestration tool. Any local
+//         changes will be overwritten !!! You have been warned !!!
+//
+//---------------------- <+++ansible-managed-file+++> -------------------------+
+
+// For all options see documentation
+{
+    // Warden config can be also referenced as:
+    // "warden": "/path/to/warden_client.cfg"
+    "warden": {
+        "url": "{{ hm_warden_client__server_url }}",
+        "cafile": "/etc/ssl/certs/ca-certificates.crt",
+        "keyfile": "{{ hm_certified__cert_host_dir }}/warden.key.pem",
+        "certfile": "{{ hm_certified__cert_host_dir }}/warden.cert.pem",
+        "timeout": 30,
+        "send_events_limit": 2000,
+        "get_events_limit": 2000,
+        "errlog": {"level": "debug"},
+        //"filelog": {"level": "debug", "file": "/var/log/warden_filer.log"},
+        "syslog": {"level": "debug", "facility": "local7"},
+        "idstore": "/var/lib/warden_filer/warden_filer.id",
+        "name": "{{ hm_warden_client__node_name }}"
+    },
+{% if hm_warden_client__sender_enabled %}
+    "sender": {
+        "dir": "{{ hm_warden_client__sender_queue }}",
+        "pid_file": "/run/warden_filer/sender.pid",
+        "uid": {{ hm_warden_client__daemon_uid }},
+        "gid": {{ hm_warden_client__daemon_gid }}
+    }{% if hm_warden_client__receiver_enabled %},{% endif %}
+{% endif %}
+{% if hm_warden_client__receiver_enabled %}
+    "receiver": {
+        "dir": "{{ hm_warden_client__receiver_queue }}",
+        "pid_file": "/run/warden_filer/receiver.pid",
+        "uid": {{ hm_warden_client__daemon_uid }},
+        "gid": {{ hm_warden_client__daemon_gid }},
+        "file_limit": 10000,
+        "limit_wait_time": 20
+    }
+{% endif %}
+}

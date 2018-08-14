@@ -1,0 +1,18 @@
+---
+
+- name: Restart Warden receiver service
+  service:
+    name: warden_filer_receiver
+    state: restarted
+  when: hm_warden_client__receiver_enabled
+
+- name: Restart Warden sender service
+  service:
+    name: warden_filer_sender
+    state: restarted
+  when: hm_warden_client__sender_enabled
+
+- name: Restart NRPE service
+  service:
+    name: nagios-nrpe-server
+    state: restarted

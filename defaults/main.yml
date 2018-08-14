@@ -1,0 +1,41 @@
+---
+
+#
+# Name of the node running Warden client.
+#
+hm_warden_client__node_name:
+
+#
+# Numerical UID of the user account under which to run Warden filer.
+#
+hm_warden_client__daemon_uid:
+
+#
+# Numerical GID of the group account under which to run Warden filer.
+#
+hm_warden_client__daemon_gid:
+
+#
+# URL of the Warden server to which send or from which to receive IDEA messages.
+#
+hm_warden_client__server_url:
+
+#
+# Enable sending warden_filer.
+#
+hm_warden_client__sender_enabled: false
+
+#
+# Enable receiving warden_filer.
+#
+hm_warden_client__receiver_enabled: false
+
+#
+# Queue directory for sending warden_filer.
+#
+hm_warden_client__sender_queue: /var/warden/sender/queue
+
+#
+# Queue directory for receiving warden_filer.
+#
+hm_warden_client__receiver_queue: /var/mentat/spool/mentat-inspector.py

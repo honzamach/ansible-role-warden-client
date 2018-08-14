@@ -1,0 +1,16 @@
+#----------------------- <+++ansible-managed-file+++> -------------------------+
+#
+#                             IMPORTANT WARNING
+#
+#  This file is managed remotely by Ansible orchestration tool. Any local
+#  changes will be overwritten without any notice !!! You have been warned !!!
+#
+#----------------------- <+++ansible-managed-file+++> -------------------------+
+
+{% if hm_warden_client__sender_enabled %}
+{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c /etc/warden_filer.cfg --pid_file /var/run/warden_filer/sender.pid --daemon sender" | sed 's/:/ -/' | cut -f 1 -d \|;
+{{ hm_monitored__plugins_dir }}/check_file_count -d {{ hm_warden_client__sender_queue }} -w 100 -c 1000
+{% endif %}
+{% if hm_warden_client__receiver_enabled %}
+{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c /etc/warden_filer.cfg --pid_file /var/run/warden_filer/receiver.pid --daemon receiver" | sed 's/:/ -/' | cut -f 1 -d \|;
+{% endif %}

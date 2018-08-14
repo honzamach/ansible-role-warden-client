@@ -1,0 +1,126 @@
+---
+
+- name: Ensure Warden3 utilities are executable
+  file:
+    path: "{{ item }}"
+    mode: 0755
+  with_items:
+    - /usr/local/bin/warden_filer.py
+    - /usr/local/bin/warden_apply.sh
+
+- name: Configuring Nagios NRPE daemon for Warden client
+  template:
+    src: "{{ item }}"
+    dest: /etc/nagios/nrpe.d/warden-client.cfg
+    owner: root
+    group: root
+    mode: 0644
+  with_first_found:
+    - "host_files/{{ inventory_hostname }}/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "host_files/{{ inventory_hostname }}/nrpe_warden-client.cfg.j2"
+    - "group_files/servers-production/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-production/nrpe_warden-client.cfg.j2"
+    - "group_files/servers-development/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-development/nrpe_warden-client.cfg.j2"
+    - "group_files/servers-demo/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-demo/nrpe_warden-client.cfg.j2"
+    - "group_files/servers/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers/nrpe_warden-client.cfg.j2"
+    - "nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "nrpe_warden-client.cfg.j2"
+  notify: Restart NRPE service
+  when: '"servers-monitored" in group_names'
+
+- name: Configuring system status script
+  template:
+    src: "{{ item }}"
+    dest: /opt/system-status/system-status.d/30-warden-client
+    owner: root
+    group: root
+    mode: 0755
+  with_first_found:
+    - "host_files/{{ inventory_hostname }}/system-status-warden-client.j2"
+    - "group_files/servers-production/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-production/system-status-warden-client.j2"
+    - "group_files/servers-development/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-development/system-status-warden-client.j2"
+    - "group_files/servers-demo/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-demo/system-status-warden-client.j2"
+    - "group_files/servers/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers/system-status-warden-client.j2"
+    - "system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
+    - "system-status-warden-client.j2"
+  when: '"servers-commonenv" in group_names'
+
+- name: Configuring defaults for Warden filer receiver
+  template:
+    src: default_warden_filer_receiver.j2
+    dest: /etc/default/warden_filer_receiver
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart Warden receiver service
+    - Restart Warden sender service
+
+- name: Configuring defaults for Warden filer sender
+  template:
+    src: default_warden_filer_sender.j2
+    dest: /etc/default/warden_filer_sender
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart Warden receiver service
+    - Restart Warden sender service
+
+- name: Configuring Warden filer
+  template:
+    src: "{{ item }}"
+    dest: /etc/warden_filer.cfg
+    owner: root
+    group: root
+    mode: 0644
+  with_first_found:
+    - "host_files/{{ inventory_hostname }}/warden_filer.cfg.j2"
+    - "group_files/servers-production/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-production/warden_filer.cfg.j2"
+    - "group_files/servers-development/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-development/warden_filer.cfg.j2"
+    - "group_files/servers-demo/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-demo/warden_filer.cfg.j2"
+    - "group_files/servers/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers/warden_filer.cfg.j2"
+    - "warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "warden_filer.cfg.j2"
+  notify:
+    - Restart Warden receiver service
+    - Restart Warden sender service
+
+#- name: Ensuring Warden receiver IS running and enabled at system start (based on config)
+#  service:
+#    name: warden_filer_receiver
+#    state: started
+#    enabled: yes
+#  when: hm_warden_client__receiver_enabled
+
+#- name: Ensuring Warden receiver IS NOT running and disabled at system start (based on config)
+#  service:
+#    name: warden_filer_receiver
+#    state: stopped
+#    enabled: no
+#  when: not hm_warden_client__receiver_enabled
+
+#- name: Ensuring Warden sender IS running and enabled at system start (based on config)
+#  service:
+#    name: warden_filer_sender
+#    state: started
+#    enabled: yes
+#  when: hm_warden_client__sender_enabled
+
+#- name: Ensuring Warden sender IS NOT running and disabled at system start (based on config)
+#  service:
+#    name: warden_filer_sender
+#    state: stopped
+#    enabled: no
+#  when: not hm_warden_client__sender_enabled

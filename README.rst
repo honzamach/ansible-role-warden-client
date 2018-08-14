@@ -33,7 +33,7 @@ Dependencies
 This role is dependent on following roles:
 
 * :ref:`certified <section-role-certified>` (soft)
-* :ref:`monitored <section-role-certified>` (soft)
+* :ref:`monitored <section-role-monitored>` (soft)
 
 No other roles have direct dependency on this role.
 

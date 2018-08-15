@@ -21,6 +21,11 @@ hm_warden_client__daemon_gid:
 hm_warden_client__server_url:
 
 #
+# Enable service management.
+#
+hm_warden_client__manage_services: false
+
+#
 # Enable sending warden_filer.
 #
 hm_warden_client__sender_enabled: false

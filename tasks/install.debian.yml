@@ -3,7 +3,7 @@
 - name: Installing necessary packages
   apt:
     name: git
-    state: present
+    state: latest
 
 - name: Installing Warden from Git repository
   git:
@@ -12,16 +12,9 @@
     version: warden-3
     accept_hostkey: yes
 
-- name: Installing Warden service init scripts
-  file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    state: link
-  with_items:
-    - { src: '/opt/warden3/warden3/contrib/warden_filer/warden_filer_receiver', dest: '/etc/init.d/warden_filer_receiver' }
-    - { src: '/opt/warden3/warden3/contrib/warden_filer/warden_filer_sender', dest: '/etc/init.d/warden_filer_sender' }
-
-# NOTE: This must be installed with hard copy, otherwise Python does not find the library
+#
+# NOTE: This must be installed with hard copy, otherwise Python does not find the library.
+#
 - name: Installing Warden3 library and filer and registration utilities into system PATH
   synchronize:
     mode: pull
@@ -40,3 +33,4 @@
 #
 # TODO: Implement task for initial certificate registration using warden-apply.sh
 #
+# /usr/local/bin/warden_apply.sh {{ host }}/warden-ra {{ ident }} {{ passwd }}

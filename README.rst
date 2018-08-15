@@ -43,11 +43,13 @@ Managed files
 
 This role directly manages content of following files on target system:
 
+* ``/etc/warden_filer.cfg``
+* ``/etc/init.d/warden_filer_receiver``
+* ``/etc/init.d/warden_filer_sender``
 * ``/etc/default/warden_filer_receiver``
 * ``/etc/default/warden_filer_sender``
 * ``/etc/nagios/nrpe.d/warden-client.cfg``
 * ``/opt/system-status/system-status.d/30-warden-client``
-* ``/etc/warden_filer.cfg``
 
 
 Role variables
@@ -84,19 +86,26 @@ that can be overriden and adjusted as needed:
     * *Datatype:* ``string``
     * *Default value:* (undefined)
 
+.. envvar:: hm_warden_client__manage_services
+
+    Enable service management.
+
+    * *Datatype:* ``bool``
+    * *Default value:* ``false``
+
 .. envvar:: hm_warden_client__sender_enabled
 
     Enable receiving warden_filer.
 
     * *Datatype:* ``bool``
-    * *Default value:* ``true``
+    * *Default value:* ``false``
 
 .. envvar:: hm_warden_client__receiver_enabled
 
     Enable receiving warden_filer.
 
     * *Datatype:* ``bool``
-    * *Default value:* ``true``
+    * *Default value:* ``false``
 
 .. envvar:: hm_warden_client__sender_queue
 

@@ -28,7 +28,7 @@
 {% if hm_warden_client__sender_enabled %}
     "sender": {
         "dir": "{{ hm_warden_client__sender_queue }}",
-        "pid_file": "/run/warden_filer/sender.pid",
+        "pid_file": "/var/run/warden_filer/sender.pid",
         "uid": {{ hm_warden_client__daemon_uid }},
         "gid": {{ hm_warden_client__daemon_gid }}
     }{% if hm_warden_client__receiver_enabled %},{% endif %}
@@ -36,7 +36,7 @@
 {% if hm_warden_client__receiver_enabled %}
     "receiver": {
         "dir": "{{ hm_warden_client__receiver_queue }}",
-        "pid_file": "/run/warden_filer/receiver.pid",
+        "pid_file": "/var/run/warden_filer/receiver.pid",
         "uid": {{ hm_warden_client__daemon_uid }},
         "gid": {{ hm_warden_client__daemon_gid }},
         "file_limit": 10000,

@@ -11,7 +11,7 @@
 #   git clone https://github.com/honzamach/ansible-role-warden_client.git honzamach.warden_client
 #
 
-- hosts: servers-warden-client
+- hosts: servers_warden_client
   remote_user: root
   roles:
     - role: honzamach.warden_client

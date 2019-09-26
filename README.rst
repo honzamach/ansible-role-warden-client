@@ -151,7 +151,7 @@ roles:
 Group memberships
 --------------------------------------------------------------------------------
 
-* **servers-monitored**
+* **servers_monitored**
 
   In case the target server is member of this group Nagios monitoring is automagically
   configured for the Syslog-ng system.
@@ -210,12 +210,12 @@ Example Playbook
 
 Example content of inventory file ``inventory``::
 
-    [servers-warden-client]
+    [servers_warden_client]
     localhost
 
 Example content of role playbook file ``playbook.yml``::
 
-    - hosts: servers-warden-client
+    - hosts: servers_warden_client
       remote_user: root
       roles:
         - role: honzamach.warden_client

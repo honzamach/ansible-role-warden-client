@@ -44,3 +44,18 @@ hm_warden_client__sender_queue: /var/warden/sender/queue
 # Queue directory for receiving warden_filer.
 #
 hm_warden_client__receiver_queue: /var/mentat/spool/mentat-inspector.py
+
+#
+# Monitoring configuration setting for checking queue size in the *incoming* directory.
+#
+hm_warden_client__check_queue_size:
+  w: 5000
+  c: 10000
+
+#
+# Monitoring configuration setting for checking queue size in other than *incoming*
+# directories.
+#
+hm_warden_client__check_queue_dirs:
+  w: 100
+  c: 1000

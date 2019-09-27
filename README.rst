@@ -121,6 +121,21 @@ that can be overriden and adjusted as needed:
     * *Datatype:* ``directory``
     * *Default value:* ``/var/mentat/spool/_inspector``
 
+.. envvar:: hm_warden_client__check_queue_size:
+
+    Monitoring configuration setting for checking queue size in the *incoming* directory.
+
+    * *Datatype:* ``dict``
+    * *Default:* ``{'w': 5000, 'c': 10000}``
+
+.. envvar:: hm_warden_client__check_queue_dirs:
+
+    Monitoring configuration setting for checking queue size in other than *incoming*
+    directories.
+
+    * *Datatype:* ``dict``
+    * *Default:* ``{'w': 100, 'c': 1000}``
+
 Additionally this role makes use of following built-in Ansible variables:
 
 .. envvar:: ansible_lsb['codename']

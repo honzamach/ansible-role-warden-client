@@ -9,7 +9,7 @@
   git:
     repo: https://homeproj.cesnet.cz/git/warden.git/
     dest: /opt/warden3
-    version: warden-3
+    version: master
     accept_hostkey: yes
 
 #
@@ -22,9 +22,9 @@
     dest: "{{ item.dest }}"
     perms: no
   with_items:
-    - { src: '/opt/warden3/warden3/warden_client/warden_client.py', dest: '/usr/local/bin/warden_client.py' }
-    - { src: '/opt/warden3/warden3/contrib/warden_filer/warden_filer.py', dest: '/usr/local/bin/warden_filer.py' }
-    - { src: '/opt/warden3/warden3/contrib/warden_ra/warden_apply.sh', dest: '/usr/local/bin/warden_apply.sh' }
+    - { src: '/opt/warden3/warden_client/warden_client.py', dest: '/usr/local/bin/warden_client.py' }
+    - { src: '/opt/warden3/warden_filer/warden_filer.py', dest: '/usr/local/bin/warden_filer.py' }
+    - { src: '/opt/warden3/warden_ra/warden_apply.sh', dest: '/usr/local/bin/warden_apply.sh' }
   delegate_to: "{{ inventory_hostname }}"
   notify:
     - Restart Warden receiver service

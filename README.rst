@@ -154,12 +154,12 @@ Group memberships
 * **servers_monitored**
 
   In case the target server is member of this group Nagios monitoring is automagically
-  configured for the Syslog-ng system.
+  configured for the Warden client installation.
 
 * **servers_commonenv**
 
   In case the target server is member of this group system status script is automagically
-  configured for the Syslog-ng system.
+  configured for the Warden client installation.
 
 
 Usage and customization

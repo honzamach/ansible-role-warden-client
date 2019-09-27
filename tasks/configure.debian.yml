@@ -26,6 +26,7 @@
     owner: root
     group: root
     mode: 0644
+    backup: yes
   with_first_found:
     - "host_files/{{ inventory_hostname }}/warden_filer.cfg.j2"
     - "group_files/servers-{{ msms_server_type }}/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
@@ -45,6 +46,7 @@
     owner: root
     group: root
     mode: 0644
+    backup: yes
   notify:
     - Restart Warden receiver service
     - Restart Warden sender service
@@ -56,6 +58,7 @@
     owner: root
     group: root
     mode: 0644
+    backup: yes
   notify:
     - Restart Warden receiver service
     - Restart Warden sender service
@@ -67,6 +70,7 @@
     owner: root
     group: root
     mode: 0755
+    backup: yes
   with_first_found:
     - "host_files/{{ inventory_hostname }}/initd_warden_filer_receiver.j2"
     - "group_files/servers-{{ msms_server_type }}/initd_warden_filer_receiver.{{ ansible_lsb['codename'] }}.j2"
@@ -85,6 +89,7 @@
     owner: root
     group: root
     mode: 0755
+    backup: yes
   with_first_found:
     - "host_files/{{ inventory_hostname }}/initd_warden_filer_sender.j2"
     - "group_files/servers-{{ msms_server_type }}/initd_warden_filer_sender.{{ ansible_lsb['codename'] }}.j2"

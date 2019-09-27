@@ -7,6 +7,7 @@
 #
 #----------------------- <+++ansible-managed-file+++> -------------------------+
 
+command[check_warden_cert]={{ hm_monitored__plugins_dir }}/check_ssl_cert --host localhost --file {{ hm_certified__cert_host_dir }}/warden.cert.pem
 {% if hm_warden_client__sender_enabled %}
 command[check_warden3_sender]={{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c /etc/warden_filer.cfg --pid_file /var/run/warden_filer/sender.pid --daemon sender"
 command[check_warden3_sender_errors_dir]={{ hm_monitored__plugins_dir }}/check_file_count -d {{ hm_warden_client__sender_queue }} -w 100 -c 1000

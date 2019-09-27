@@ -28,12 +28,8 @@
     mode: 0644
   with_first_found:
     - "host_files/{{ inventory_hostname }}/warden_filer.cfg.j2"
-    - "group_files/servers-production/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-production/warden_filer.cfg.j2"
-    - "group_files/servers-development/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-development/warden_filer.cfg.j2"
-    - "group_files/servers-demo/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-demo/warden_filer.cfg.j2"
+    - "group_files/servers-{{ msms_server_type }}/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-{{ msms_server_type }}/warden_filer.cfg.j2"
     - "group_files/servers/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
     - "group_files/servers/warden_filer.cfg.j2"
     - "warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
@@ -73,12 +69,8 @@
     mode: 0755
   with_first_found:
     - "host_files/{{ inventory_hostname }}/initd_warden_filer_receiver.j2"
-    - "group_files/servers-production/initd_warden_filer_receiver.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-production/initd_warden_filer_receiver.j2"
-    - "group_files/servers-development/initd_warden_filer_receiver.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-development/initd_warden_filer_receiver.j2"
-    - "group_files/servers-demo/initd_warden_filer_receiver.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-demo/initd_warden_filer_receiver.j2"
+    - "group_files/servers-{{ msms_server_type }}/initd_warden_filer_receiver.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-{{ msms_server_type }}/initd_warden_filer_receiver.j2"
     - "group_files/servers/initd_warden_filer_receiver.{{ ansible_lsb['codename'] }}.j2"
     - "group_files/servers/initd_warden_filer_receiver.j2"
     - "initd_warden_filer_receiver.{{ ansible_lsb['codename'] }}.j2"
@@ -95,12 +87,8 @@
     mode: 0755
   with_first_found:
     - "host_files/{{ inventory_hostname }}/initd_warden_filer_sender.j2"
-    - "group_files/servers-production/initd_warden_filer_sender.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-production/initd_warden_filer_sender.j2"
-    - "group_files/servers-development/initd_warden_filer_sender.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-development/initd_warden_filer_sender.j2"
-    - "group_files/servers-demo/initd_warden_filer_sender.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-demo/initd_warden_filer_sender.j2"
+    - "group_files/servers-{{ msms_server_type }}/initd_warden_filer_sender.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-{{ msms_server_type }}/initd_warden_filer_sender.j2"
     - "group_files/servers/initd_warden_filer_sender.{{ ansible_lsb['codename'] }}.j2"
     - "group_files/servers/initd_warden_filer_sender.j2"
     - "initd_warden_filer_sender.{{ ansible_lsb['codename'] }}.j2"
@@ -120,12 +108,8 @@
   with_first_found:
     - "host_files/{{ inventory_hostname }}/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
     - "host_files/{{ inventory_hostname }}/nrpe_warden-client.cfg.j2"
-    - "group_files/servers-production/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-production/nrpe_warden-client.cfg.j2"
-    - "group_files/servers-development/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-development/nrpe_warden-client.cfg.j2"
-    - "group_files/servers-demo/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-demo/nrpe_warden-client.cfg.j2"
+    - "group_files/servers-{{ msms_server_type }}/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-{{ msms_server_type }}/nrpe_warden-client.cfg.j2"
     - "group_files/servers/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
     - "group_files/servers/nrpe_warden-client.cfg.j2"
     - "nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
@@ -142,17 +126,13 @@
     mode: 0755
   with_first_found:
     - "host_files/{{ inventory_hostname }}/system-status-warden-client.j2"
-    - "group_files/servers-production/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-production/system-status-warden-client.j2"
-    - "group_files/servers-development/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-development/system-status-warden-client.j2"
-    - "group_files/servers-demo/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-demo/system-status-warden-client.j2"
+    - "group_files/servers-{{ msms_server_type }}/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-{{ msms_server_type }}/system-status-warden-client.j2"
     - "group_files/servers/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
     - "group_files/servers/system-status-warden-client.j2"
     - "system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
     - "system-status-warden-client.j2"
-  when: '"servers-commonenv" in group_names'
+  when: '"servers_commonenv" in group_names'
 
 #-------------------------------------------------------------------------------
 

@@ -30,7 +30,11 @@
         "dir": "{{ hm_warden_client__sender_queue }}",
         "pid_file": "/var/run/warden_filer/sender.pid",
         "uid": {{ hm_warden_client__daemon_uid }},
-        "gid": {{ hm_warden_client__daemon_gid }}
+        "gid": {{ hm_warden_client__daemon_gid }},
+        "node": {
+            "Name": "{{ hm_warden_client__node_name }}",
+            "Type": ["Relay"]
+        }
     }{% if hm_warden_client__receiver_enabled %},{% endif %}
 {% endif %}
 {% if hm_warden_client__receiver_enabled %}

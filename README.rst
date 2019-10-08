@@ -1,6 +1,6 @@
 .. _section-role-warden-client:
 
-Role **warden-client**
+Role **warden_client**
 ================================================================================
 
 Ansible role for convenient installation of the `Warden <https://warden.cesnet.cz/>`__

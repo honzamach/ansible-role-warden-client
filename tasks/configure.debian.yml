@@ -1,5 +1,13 @@
 ---
 
+- name: Managing Warden config directory
+  file:
+    path: "{{ hm_warden_client__config_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
 - name: Managing Warden directories
   file:
     path: "{{ item }}"
@@ -19,89 +27,16 @@
     - /usr/local/bin/warden_filer.py
     - /usr/local/bin/warden_apply.sh
 
-- name: Configuring Warden filer
-  template:
-    src: "{{ item }}"
-    dest: /etc/warden_filer.cfg
-    owner: root
-    group: root
-    mode: 0644
-    backup: yes
-  with_first_found:
-    - "host_files/{{ inventory_hostname }}/warden_filer.cfg.j2"
-    - "group_files/servers-{{ msms_server_type }}/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-{{ msms_server_type }}/warden_filer.cfg.j2"
-    - "group_files/servers/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers/warden_filer.cfg.j2"
-    - "warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "warden_filer.cfg.j2"
-  notify:
-    - Restart Warden receiver service
-    - Restart Warden sender service
+- include: _inc.initfiler.yml
+  vars:
+    filer_config: "{{ outer_item }}"
+  loop: "{{ hm_warden_client__filers }}"
+  loop_control:
+    loop_var: outer_item
 
-- name: Configuring defaults for Warden filer receiver
-  template:
-    src: default_warden_filer_receiver.j2
-    dest: /etc/default/warden_filer_receiver
-    owner: root
-    group: root
-    mode: 0644
-    backup: yes
-  notify:
-    - Restart Warden receiver service
-    - Restart Warden sender service
-
-- name: Configuring defaults for Warden filer sender
-  template:
-    src: default_warden_filer_sender.j2
-    dest: /etc/default/warden_filer_sender
-    owner: root
-    group: root
-    mode: 0644
-    backup: yes
-  notify:
-    - Restart Warden receiver service
-    - Restart Warden sender service
-
-- name: Configuring init script for Warden filer receiver
-  template:
-    src: "{{ item }}"
-    dest: /etc/init.d/warden_filer_receiver
-    owner: root
-    group: root
-    mode: 0755
-    backup: yes
-  with_first_found:
-    - "host_files/{{ inventory_hostname }}/initd_warden_filer_receiver.j2"
-    - "group_files/servers-{{ msms_server_type }}/initd_warden_filer_receiver.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-{{ msms_server_type }}/initd_warden_filer_receiver.j2"
-    - "group_files/servers/initd_warden_filer_receiver.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers/initd_warden_filer_receiver.j2"
-    - "initd_warden_filer_receiver.{{ ansible_lsb['codename'] }}.j2"
-    - "initd_warden_filer_receiver.j2"
-  notify:
-    - Restart Warden receiver service
-
-- name: Configuring init script for Warden filer sender
-  template:
-    src: "{{ item }}"
-    dest: /etc/init.d/warden_filer_sender
-    owner: root
-    group: root
-    mode: 0755
-    backup: yes
-  with_first_found:
-    - "host_files/{{ inventory_hostname }}/initd_warden_filer_sender.j2"
-    - "group_files/servers-{{ msms_server_type }}/initd_warden_filer_sender.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-{{ msms_server_type }}/initd_warden_filer_sender.j2"
-    - "group_files/servers/initd_warden_filer_sender.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers/initd_warden_filer_sender.j2"
-    - "initd_warden_filer_sender.{{ ansible_lsb['codename'] }}.j2"
-    - "initd_warden_filer_sender.j2"
-  notify:
-    - Restart Warden sender service
 
 #-------------------------------------------------------------------------------
+
 
 - name: Configuring Nagios NRPE monitoring
   template:
@@ -138,33 +73,3 @@
     - "system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
     - "system-status-warden-client.j2"
   when: '"servers_commonenv" in group_names'
-
-#-------------------------------------------------------------------------------
-
-- name: Ensuring Warden receiver IS running and enabled at system start (based on config)
-  service:
-    name: warden_filer_receiver
-    state: started
-    enabled: yes
-  when: hm_warden_client__manage_services and hm_warden_client__receiver_enabled
-
-- name: Ensuring Warden receiver IS NOT running and disabled at system start (based on config)
-  service:
-    name: warden_filer_receiver
-    state: stopped
-    enabled: no
-  when: hm_warden_client__manage_services and not hm_warden_client__receiver_enabled
-
-- name: Ensuring Warden sender IS running and enabled at system start (based on config)
-  service:
-    name: warden_filer_sender
-    state: started
-    enabled: yes
-  when: hm_warden_client__manage_services and hm_warden_client__sender_enabled
-
-- name: Ensuring Warden sender IS NOT running and disabled at system start (based on config)
-  service:
-    name: warden_filer_sender
-    state: stopped
-    enabled: no
-  when: hm_warden_client__manage_services and not hm_warden_client__sender_enabled

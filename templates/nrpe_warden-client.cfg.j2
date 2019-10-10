@@ -6,14 +6,28 @@
 #         changes will be overwritten !!! You have been warned !!!
 #
 #----------------------- <+++ansible-managed-file+++> -------------------------+
+{% for filer_config in hm_warden_client__filers %}
 
-command[check_warden_cert]={{ hm_monitored__plugins_dir }}/check_ssl_cert --host localhost --file {{ hm_certified__cert_host_dir }}/warden.cert.pem
-{% if hm_warden_client__sender_enabled %}
-command[check_warden3_sender]={{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c /etc/warden_filer.cfg --pid_file /var/run/warden_filer/sender.pid --daemon sender"
-command[check_warden3_sender_errors_dir]={{ hm_monitored__plugins_dir }}/check_file_count -d {{ hm_warden_client__sender_queue }}/errors -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }}
-command[check_warden3_sender_incoming_dir]={{ hm_monitored__plugins_dir }}/check_file_count -d {{ hm_warden_client__sender_queue }}/incoming -w {{ hm_warden_client__check_queue_size['w'] }} -c {{ hm_warden_client__check_queue_size['c'] }}
-command[check_warden3_sender_temp_dir]={{ hm_monitored__plugins_dir }}/check_file_count -d {{ hm_warden_client__sender_queue }}/temp -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }}
-{% endif %}
-{% if hm_warden_client__receiver_enabled %}
-command[check_warden3_receiver]={{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c /etc/warden_filer.cfg --pid_file /var/run/warden_filer/receiver.pid --daemon receiver"
-{% endif %}
+#
+# Warden filer {{ filer_config.domain }}: check certificate validity.
+#
+command[check_warden_cert_{{ filer_config.domain }}]={{ hm_monitored__plugins_dir }}/check_ssl_cert --host localhost --file {{ hm_certified__cert_host_dir }}/warden_filer_{{ filer_config.domain }}/warden.cert.pem
+	{% if filer_config.sender_enabled %}
+
+#
+# Warden filer {{ filer_config.domain }}: check sender status.
+#
+command[check_warden_sender_{{ filer_config.domain }}]={{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file /var/run/warden_filer/sender_{{ filer_config.domain }}.pid --daemon sender"
+command[check_warden_sender_{{ filer_config.domain }}_errors_dir]={{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/errors -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }}
+command[check_warden_sender_{{ filer_config.domain }}_incoming_dir]={{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/incoming -w {{ hm_warden_client__check_queue_size['w'] }} -c {{ hm_warden_client__check_queue_size['c'] }}
+command[check_warden_sender_{{ filer_config.domain }}_temp_dir]={{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/temp -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }}
+	{% endif %}
+	{% if filer_config.receiver_enabled %}
+
+#
+# Warden filer {{ filer_config.domain }}: check receiver status.
+#
+command[check_warden_receiver_{{ filer_config.domain }}]={{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file /var/run/warden_filer/receiver_{{ filer_config.domain }}.pid --daemon receiver"
+	{% endif %}
+
+{% endfor %}

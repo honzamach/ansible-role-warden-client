@@ -1,0 +1,160 @@
+---
+
+- name: Configuring Warden filer
+  template:
+    src: "{{ item }}"
+    dest: "{{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  with_first_found:
+    - "host_files/{{ inventory_hostname }}/warden_filer.cfg.j2"
+    - "group_files/servers-{{ msms_server_type }}/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-{{ msms_server_type }}/warden_filer.cfg.j2"
+    - "group_files/servers/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers/warden_filer.cfg.j2"
+    - "warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "warden_filer.cfg.j2"
+  # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
+  register: hmwc__regcfg
+  notify:
+    - Restart warden_filer receiver service
+    - Restart warden_filer sender service
+
+- name: Configuring defaults for Warden filer receiver
+  template:
+    src: default_warden_filer_receiver.j2
+    dest: /etc/default/warden_filer_{{ filer_config.domain }}_receiver
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
+  register: hmwc__regdfr
+  notify:
+    - Restart warden_filer receiver service
+    - Restart warden_filer sender service
+
+- name: Configuring defaults for Warden filer sender
+  template:
+    src: default_warden_filer_sender.j2
+    dest: /etc/default/warden_filer_{{ filer_config.domain }}_sender
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
+  register: hmwc__regdfs
+  notify:
+    - Restart warden_filer receiver service
+    - Restart warden_filer sender service
+
+- name: Configuring systemd service for Warden filer receiver
+  template:
+    src: "{{ item }}"
+    dest: /etc/systemd/system/warden_filer_{{ filer_config.domain }}_receiver.service
+    owner: root
+    group: root
+    mode: 0755
+    backup: yes
+  with_first_found:
+    - "host_files/{{ inventory_hostname }}/warden_filer_receiver.service.j2"
+    - "group_files/servers-{{ msms_server_type }}/warden_filer_receiver.service.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-{{ msms_server_type }}/warden_filer_receiver.service.j2"
+    - "group_files/servers/warden_filer_receiver.service.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers/warden_filer_receiver.service.j2"
+    - "warden_filer_receiver.service.{{ ansible_lsb['codename'] }}.j2"
+    - "warden_filer_receiver.service.j2"
+  # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
+  register: hmwc__reginr
+  notify:
+    - Restart systemd
+    - Restart warden_filer receiver service
+
+- name: Configuring systemd service for Warden filer sender
+  template:
+    src: "{{ item }}"
+    dest: /etc/systemd/system/warden_filer_{{ filer_config.domain }}_sender.service
+    owner: root
+    group: root
+    mode: 0755
+    backup: yes
+  with_first_found:
+    - "host_files/{{ inventory_hostname }}/warden_filer_sender.service.j2"
+    - "group_files/servers-{{ msms_server_type }}/warden_filer_sender.service.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers-{{ msms_server_type }}/warden_filer_sender.service.j2"
+    - "group_files/servers/warden_filer_sender.service.{{ ansible_lsb['codename'] }}.j2"
+    - "group_files/servers/warden_filer_sender.service.j2"
+    - "warden_filer_sender.service.{{ ansible_lsb['codename'] }}.j2"
+    - "warden_filer_sender.service.j2"
+  # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
+  register: hmwc__regins
+  notify:
+    - Restart systemd
+    - Restart warden_filer sender service
+
+  # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
+- name: Calculate the need for service restart
+  set_fact:
+    hmwc__to_restart: "{{ hmwc__to_restart|default({})|combine({filer_config.name: hmwc__regcfg.changed or hmwc__regdfr.changed or hmwc__regdfs.changed or hmwc__reginr.changed or hmwc__regins.changed})}}"
+
+- name: Status of warden_filer services that need to be restarted
+  debug:
+    var: hmwc__to_restart
+  tags:
+    - debug
+
+- name: Removing unnecessary files - warden_filer receiver
+  file: 
+    path: "{{ item }}" 
+    state: absent
+  with_list:
+    - "/etc/default/warden_filer_{{ filer_config.domain }}_receiver"
+    - "/etc/systemd/system/warden_filer_{{ filer_config.domain }}_receiver.service"
+  when: not filer_config.receiver_enabled
+  notify:
+    - Restart systemd
+
+- name: Removing unnecessary files - warden_filer sender
+  file: 
+    path: "{{ item }}" 
+    state: absent
+  with_list:
+    - "/etc/default/warden_filer_{{ filer_config.domain }}_sender"
+    - "/etc/systemd/system/warden_filer_{{ filer_config.domain }}_sender.service"
+  when: not filer_config.sender_enabled
+  notify:
+    - Restart systemd
+
+
+#-------------------------------------------------------------------------------
+
+
+- name: Ensuring Warden receiver IS running and enabled at system start (based on config)
+  service:
+    name: "warden_filer_{{ filer_config.domain }}_receiver"
+    state: started
+    enabled: yes
+  when: hm_warden_client__manage_services and filer_config.receiver_enabled
+
+- name: Ensuring Warden receiver IS NOT running and disabled at system start (based on config)
+  service:
+    name: "warden_filer_{{ filer_config.domain }}_receiver"
+    state: stopped
+    enabled: no
+  when: hm_warden_client__manage_services and not filer_config.receiver_enabled
+
+- name: Ensuring Warden sender IS running and enabled at system start (based on config)
+  service:
+    name: "warden_filer_{{ filer_config.domain }}_sender"
+    state: started
+    enabled: yes
+  when: hm_warden_client__manage_services and filer_config.sender_enabled
+
+- name: Ensuring Warden sender IS NOT running and disabled at system start (based on config)
+  service:
+    name: "warden_filer_{{ filer_config.domain }}_sender"
+    state: stopped
+    enabled: no
+  when: hm_warden_client__manage_services and not filer_config.sender_enabled

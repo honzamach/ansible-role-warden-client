@@ -4,7 +4,7 @@ Role **warden_client**
 ================================================================================
 
 Ansible role for convenient installation of the `Warden <https://warden.cesnet.cz/>`__
-client library and filer.
+client library and warden_filer utility.
 
 * `Ansible Galaxy page <https://galaxy.ansible.com/honzamach/warden_client>`__
 * `GitHub repository <https://github.com/honzamach/ansible-role-warden-client>`__
@@ -14,7 +14,16 @@ client library and filer.
 Description
 --------------------------------------------------------------------------------
 
-This role is responsible for provisioning of Warden-client library on target host.
+This role is responsible for installation and configuration of Warden client 
+library on target host. Client library is installed from official Git repository,
+which is currently probably the best option, mainly because it provides easy
+way to uprgade the software.
+
+Role is designed to enable administrators configure multiple instances of the
+**warden_filer** utility. Each configuration file may contain separate configurations
+for sending and receiving filer with common server connection and logging options.
+You may however configure additional instance with different connection parameters
+to enable communication with another Warden server.
 
 .. note::
 
@@ -43,11 +52,11 @@ Managed files
 
 This role directly manages content of following files on target system:
 
-* ``/etc/warden_filer.cfg``
-* ``/etc/init.d/warden_filer_receiver``
-* ``/etc/init.d/warden_filer_sender``
-* ``/etc/default/warden_filer_receiver``
-* ``/etc/default/warden_filer_sender``
+* ``/etc/warden_filer/warden_filer_{{ filer.domain }}.cfg``
+* ``/etc/systemd/system/warden_filer_{{ filer.domain }}_receiver.service``
+* ``/etc/systemd/system/warden_filer_{{ filer.domain }}_sender.service``
+* ``/etc/default/warden_filer_{{ filer.domain }}_receiver``
+* ``/etc/default/warden_filer_{{ filer.domain }}_sender``
 * ``/etc/nagios/nrpe.d/warden-client.cfg``
 * ``/opt/system-status/system-status.d/30-warden-client``
 
@@ -58,33 +67,26 @@ Role variables
 There are following internal role variables defined in ``defaults/main.yml`` file,
 that can be overriden and adjusted as needed:
 
-.. envvar:: hm_warden_client__node_name:
+.. envvar:: hm_warden_client__repo_url
 
-    Name of the node running Warden client.
-
-    * *Datatype:* ``string``
-    * *Default value:* (undefined)
-
-.. envvar:: hm_warden_client__daemon_uid:
-
-    Numerical UID of the user account under which to run Warden filer.
-
-    * *Datatype:* ``integer``
-    * *Default value:* (undefined)
-
-.. envvar:: hm_warden_client__daemon_gid:
-
-    Numerical GID of the group account under which to run Warden filer.
-
-    * *Datatype:* ``integer``
-    * *Default value:* (undefined)
-
-.. envvar:: hm_warden_client__server_url:
-
-    URL of the Warden server to which send or from which to receive IDEA messages.
+    Default URL of the Git repository from which to install Warden client.
 
     * *Datatype:* ``string``
-    * *Default value:* (undefined)
+    * *Default value:* ``"https://homeproj.cesnet.cz/git/warden.git/"``
+
+.. envvar:: hm_warden_client__install_path
+
+    Installation path on target hosts, without trailing slash.
+
+    * *Datatype:* ``string``
+    * *Default value:* ``"/opt/warden3"``
+
+hm_warden_client__config_path
+    
+    Path to configuration directory on target hosts, without trailing slash.
+
+    * *Datatype:* ``string``
+    * *Default value:* ``"/etc/warden_client"``
 
 .. envvar:: hm_warden_client__manage_services
 
@@ -93,48 +95,83 @@ that can be overriden and adjusted as needed:
     * *Datatype:* ``bool``
     * *Default value:* ``false``
 
-.. envvar:: hm_warden_client__sender_enabled
+.. envvar:: hm_warden_client__server_url
 
-    Enable receiving warden_filer.
+    Default URL of the Warden server to which send or from which to receive IDEA messages. 
+    May be overridden with ``hm_warden_client__filers.#.server_url`` for particular instance of warden_filer.
 
-    * *Datatype:* ``bool``
-    * *Default value:* ``false``
+    * *Datatype:* ``string``
+    * *Default value:* ``"https://warden-hub.cesnet.cz/warden3"``
 
-.. envvar:: hm_warden_client__receiver_enabled
+.. envvar:: hm_warden_client__daemon_uid
 
-    Enable receiving warden_filer.
+    Default user account under which to run warden_filer.
+    May be overridden with ``hm_warden_client__filers.#.daemon_uid`` for particular instance of warden_filer.
 
-    * *Datatype:* ``bool``
-    * *Default value:* ``false``
+    * *Datatype:* ``integer``
+    * *Default value:* (undefined)
+
+.. envvar:: hm_warden_client__daemon_gid
+
+    Default group account under which to run warden_filer.
+    May be overridden with ``hm_warden_client__filers.#.daemon_gid`` for particular instance of warden_filer.
+
+    * *Datatype:* ``integer``
+    * *Default value:* (undefined)
 
 .. envvar:: hm_warden_client__sender_queue
 
-    Queue directory for sending warden_filer.
+    Default queue directory for sending warden_filer.
+    May be overridden with ``hm_warden_client__filers.#.sender_queue`` for particular instance of warden_filer.
 
     * *Datatype:* ``directory``
     * *Default value:* ``/var/warden/sender/queue``
 
 .. envvar:: hm_warden_client__receiver_queue
 
-    Queue directory for receiving warden_filer.
+    Default queue directory for receiving warden_filer.
+    May be overridden with ``hm_warden_client__filers.#.receiver_queue`` for particular instance of warden_filer.
 
     * *Datatype:* ``directory``
-    * *Default value:* ``/var/mentat/spool/_inspector``
+    * *Default value:* ``/var/mentat/spool/mentat-inspector.py``
 
-.. envvar:: hm_warden_client__check_queue_size:
+.. envvar:: hm_warden_client__receiver_queue_limit
+
+    Default queue limit for receiving warden_filer.
+    May be overridden with ``hm_warden_client__filers.#.receiver_queue_limit`` for particular instance of warden_filer.
+
+    * *Datatype:* ``integer``
+    * *Default value:* ``5000``
+
+.. envvar:: hm_warden_client__ca_cert
+
+    Default CA certificate for Warden server verification.
+    May be overridden with ``hm_warden_client__filers.#.ca_cert`` for particular instance of warden_filer.
+
+    * *Datatype:* ``file``
+    * *Default value:* ``/etc/ssl/certs/ca-certificates.crt``
+
+.. envvar:: hm_warden_client__check_queue_size
 
     Monitoring configuration setting for checking queue size in the *incoming* directory.
 
     * *Datatype:* ``dict``
-    * *Default:* ``{'w': 5000, 'c': 10000}``
+    * *Default:* ``{'w': 2000, 'c': 5000}``
 
-.. envvar:: hm_warden_client__check_queue_dirs:
+.. envvar:: hm_warden_client__check_queue_dirs
 
     Monitoring configuration setting for checking queue size in other than *incoming*
     directories.
 
     * *Datatype:* ``dict``
     * *Default:* ``{'w': 100, 'c': 1000}``
+
+.. envvar:: hm_warden_client__filers
+
+    List of configurations for warden_filer instances. Please see section :ref:`section-role-warden-client-filercfgs` for more details.
+
+    * *Datatype:* ``dict``
+    * *Default:* (undefined)
 
 Additionally this role makes use of following built-in Ansible variables:
 
@@ -146,6 +183,34 @@ Additionally this role makes use of following built-in Ansible variables:
 .. envvar:: group_names
 
     See section *Group memberships* below for details.
+
+
+.. _section-role-warden-client-filercfgs:
+
+Configuration of warden_filer instances
+--------------------------------------------------------------------------------
+
+Following is and example of 
+
+    hm_warden_client__filers:
+        # Domain for this warden_filer instance. May be empty in case there is only one filer installation.
+      - domain: cesnet
+        # Name of this warden_filer instance for communication with Warden server.
+        node_name: cz.cesnet.host.warden_filer
+        # URL of the Warden server to which send or from which to receive IDEA messages.
+        server_url: https://warden-hub.cesnet.cz/warden3
+        # User account under which to run warden_filer.
+        user: 1000
+        # Group account under which to run warden_filer.
+        group: 1000
+        # Enable sending warden_filer.
+        sender_enabled: false
+        # Enable receiving warden_filer.
+        receiver_enabled: false
+        # Queue directory for sending warden_filer.
+        sender_queue: /var/warden/sender/queue
+        # Queue directory for sending warden_filer.
+        receiver_queue: /var/mentat/spool/mentat-inspector.py
 
 
 Foreign variables

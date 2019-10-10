@@ -12,38 +12,41 @@
     // Warden config can be also referenced as:
     // "warden": "/path/to/warden_client.cfg"
     "warden": {
-        "url": "{{ hm_warden_client__server_url }}",
-        "cafile": "/etc/ssl/certs/ca-certificates.crt",
-        "keyfile": "{{ hm_certified__cert_host_dir }}/warden.key.pem",
-        "certfile": "{{ hm_certified__cert_host_dir }}/warden.cert.pem",
+        "url": "{{ filer_config.server_url|default(hm_warden_client__server_url) }}",
+        "cafile": "{{ filer_config.ca_cert|default(hm_warden_client__ca_cert) }}",
+        "keyfile": "{{ hm_certified__cert_host_dir }}/warden_filer_{{ filer_config.domain }}/warden.key.pem",
+        "certfile": "{{ hm_certified__cert_host_dir }}/warden_filer_{{ filer_config.domain }}/warden.cert.pem",
         "timeout": 30,
         "send_events_limit": 2000,
         "get_events_limit": 2000,
         "errlog": {"level": "debug"},
-        //"filelog": {"level": "debug", "file": "/var/log/warden_filer.log"},
+    {% if filer_config.log_to_file|default(False) %}
+        "filelog": {"level": "debug", "file": "/var/log/warden_filer_{{ filer_config.domain }}.log"},
+    {% else %}
         "syslog": {"level": "debug", "facility": "local7"},
-        "idstore": "/var/lib/warden_filer/warden_filer.id",
-        "name": "{{ hm_warden_client__node_name }}"
+    {% endif %}
+        "idstore": "/var/lib/warden_filer/warden_filer_{{ filer_config.domain }}.id",
+        "name": "{{ filer_config.node_name }}"
     },
-{% if hm_warden_client__sender_enabled %}
+{% if filer_config.sender_enabled %}
     "sender": {
-        "dir": "{{ hm_warden_client__sender_queue }}",
-        "pid_file": "/var/run/warden_filer/sender.pid",
-        "uid": {{ hm_warden_client__daemon_uid }},
-        "gid": {{ hm_warden_client__daemon_gid }},
+        "dir": "{{ filer_config.sender_queue|default(hm_warden_client__sender_queue) }}",
+        "pid_file": "/var/run/warden_filer/sender_{{ filer_config.domain }}.pid",
+        "uid": {{ filer_config.daemon_uid|default(hm_warden_client__daemon_uid) }},
+        "gid": {{ filer_config.daemon_gid|default(hm_warden_client__daemon_gid) }},
         "node": {
-            "Name": "{{ hm_warden_client__node_name }}",
+            "Name": "{{ filer_config.node_name }}",
             "Type": ["Relay"]
         }
-    }{% if hm_warden_client__receiver_enabled %},{% endif %}
+    }{% if filer_config.receiver_enabled %},{% endif %}
 {% endif %}
-{% if hm_warden_client__receiver_enabled %}
+{% if filer_config.receiver_enabled %}
     "receiver": {
-        "dir": "{{ hm_warden_client__receiver_queue }}",
-        "pid_file": "/var/run/warden_filer/receiver.pid",
-        "uid": {{ hm_warden_client__daemon_uid }},
-        "gid": {{ hm_warden_client__daemon_gid }},
-        "file_limit": 10000,
+        "dir": "{{ filer_config.receiver_queue|default(hm_warden_client__receiver_queue) }}",
+        "pid_file": "/var/run/warden_filer/receiver_{{ filer_config.domain }}.pid",
+        "uid": {{ filer_config.daemon_uid|default(hm_warden_client__daemon_uid) }},
+        "gid": {{ filer_config.daemon_gid|default(hm_warden_client__daemon_gid) }},
+        "file_limit": {{ filer_config.receiver_queue_limit|default(hm_warden_client__receiver_queue_limit) }},
         "limit_wait_time": 20
     }
 {% endif %}

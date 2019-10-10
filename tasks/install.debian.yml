@@ -7,13 +7,13 @@
 
 - name: Installing Warden from Git repository
   git:
-    repo: https://homeproj.cesnet.cz/git/warden.git/
-    dest: /opt/warden3
+    repo: "{{ hm_warden_client__repo_url }}"
+    dest: "{{ hm_warden_client__install_path }}"
     version: master
     accept_hostkey: yes
 
 #
-# NOTE: This must be installed with hard copy, otherwise Python does not find the library.
+# NOTE: Python files must be installed with hard copy, otherwise Python does not find the libraries.
 #
 - name: Installing Warden3 library and filer and registration utilities into system PATH
   synchronize:
@@ -22,13 +22,15 @@
     dest: "{{ item.dest }}"
     perms: no
   with_items:
-    - { src: '/opt/warden3/warden_client/warden_client.py', dest: '/usr/local/bin/warden_client.py' }
-    - { src: '/opt/warden3/warden_filer/warden_filer.py', dest: '/usr/local/bin/warden_filer.py' }
-    - { src: '/opt/warden3/warden_ra/warden_apply.sh', dest: '/usr/local/bin/warden_apply.sh' }
+    - { src: "{{ hm_warden_client__install_path }}/warden_client/warden_client.py", dest: '/usr/local/bin/warden_client.py' }
+    - { src: "{{ hm_warden_client__install_path }}/warden_filer/warden_filer.py", dest: '/usr/local/bin/warden_filer.py' }
+    - { src: "{{ hm_warden_client__install_path }}/warden_ra/warden_apply.sh", dest: '/usr/local/bin/warden_apply.sh' }
   delegate_to: "{{ inventory_hostname }}"
+  # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
+  register: hmwc__regupd
   notify:
-    - Restart Warden receiver service
-    - Restart Warden sender service
+    - Restart warden_filer receiver service
+    - Restart warden_filer sender service
 
 #
 # TODO: Implement task for initial certificate registration using warden-apply.sh

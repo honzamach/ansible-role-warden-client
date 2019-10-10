@@ -1,56 +1,73 @@
 ---
 
 #
-# Name of the node running Warden client.
+# Default URL of the Git repository from which to install Warden client.
 #
-hm_warden_client__node_name:
+hm_warden_client__repo_url: https://homeproj.cesnet.cz/git/warden.git/
 
 #
-# Numerical UID of the user account under which to run Warden filer.
+# Installation path on target hosts, without trailing slash.
 #
-hm_warden_client__daemon_uid:
+hm_warden_client__install_path: /opt/warden3
 
 #
-# Numerical GID of the group account under which to run Warden filer.
+# Path to configuration directory on target hosts, without trailing slash.
 #
-hm_warden_client__daemon_gid:
+hm_warden_client__config_path: /etc/warden_client
 
 #
-# URL of the Warden server to which send or from which to receive IDEA messages.
-#
-hm_warden_client__server_url:
-
-#
-# Enable service management.
+# Enable/disable Warden client service management.
 #
 hm_warden_client__manage_services: false
 
 #
-# Enable sending warden_filer.
+# Default URL of the Warden server to which send or from which to receive IDEA messages. 
+# May be overridden with ``hm_warden_client__filers.#.server_url`` for particular instance of warden_filer.
 #
-hm_warden_client__sender_enabled: false
+hm_warden_client__server_url: https://warden-hub.cesnet.cz/warden3
 
 #
-# Enable receiving warden_filer.
+# Default user account under which to run warden_filer.
+# May be overridden with ``hm_warden_client__filers.#.daemon_uid`` for particular instance of warden_filer.
 #
-hm_warden_client__receiver_enabled: false
+hm_warden_client__daemon_uid:
 
 #
-# Queue directory for sending warden_filer.
+# Default group account under which to run warden_filer.
+# May be overridden with ``hm_warden_client__filers.#.daemon_gid`` for particular instance of warden_filer.
+#
+hm_warden_client__daemon_gid:
+
+#
+# Default queue directory for sending warden_filer.
+# May be overridden with ``hm_warden_client__filers.#.sender_queue`` for particular instance of warden_filer.
 #
 hm_warden_client__sender_queue: /var/warden/sender/queue
 
 #
-# Queue directory for receiving warden_filer.
+# Default queue directory for receiving warden_filer.
+# May be overridden with ``hm_warden_client__filers.#.receiver_queue`` for particular instance of warden_filer.
 #
 hm_warden_client__receiver_queue: /var/mentat/spool/mentat-inspector.py
+
+#
+# Default queue limit for receiving warden_filer.
+# May be overridden with ``hm_warden_client__filers.#.receiver_queue_limit`` for particular instance of warden_filer.
+#
+hm_warden_client__receiver_queue_limit: 5000
+
+#
+# Default CA certificate for Warden server verification.
+# May be overridden with ``hm_warden_client__filers.#.ca_cert`` for particular instance of warden_filer.
+#
+hm_warden_client__ca_cert: /etc/ssl/certs/ca-certificates.crt
 
 #
 # Monitoring configuration setting for checking queue size in the *incoming* directory.
 #
 hm_warden_client__check_queue_size:
-  w: 5000
-  c: 10000
+  w: 2000
+  c: 5000
 
 #
 # Monitoring configuration setting for checking queue size in other than *incoming*
@@ -59,3 +76,26 @@ hm_warden_client__check_queue_size:
 hm_warden_client__check_queue_dirs:
   w: 100
   c: 1000
+
+#
+# List of configurations for warden_filer instances.
+#
+hm_warden_client__filers:
+#    # Domain for this warden_filer instance. May be empty in case there is only one filer installation.
+#  - domain: cesnet
+#    # Name of this warden_filer instance for communication with Warden server.
+#    node_name: cz.cesnet.host.warden_filer
+#    # URL of the Warden server to which send or from which to receive IDEA messages.
+#    server_url: https://warden-hub.cesnet.cz/warden3
+#    # User account under which to run warden_filer.
+#    user: warden
+#    # Group account under which to run warden_filer.
+#    group: warden
+#    # Enable sending warden_filer.
+#    sender_enabled: false
+#    # Enable receiving warden_filer.
+#    receiver_enabled: false
+#    # Queue directory for sending warden_filer.
+#    sender_queue: /var/warden/sender/queue
+#    # Queue directory for sending warden_filer.
+#    receiver_queue: /var/mentat/spool/mentat-inspector.py

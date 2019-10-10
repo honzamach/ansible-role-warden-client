@@ -1,0 +1,13 @@
+[Unit]
+Description=Warden Filer - sender ({{ filer_config.domain }})
+After=syslog.target network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+EnvironmentFile=/etc/default/warden_filer_{{ filer_config.domain }}_sender
+PIDFile=/var/run/warden_filer/sender_{{ filer_config.domain }}.pid
+ExecStart=/usr/local/bin/warden_filer.py -c "{{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg" --pid_file "/var/run/warden_filer/sender_{{ filer_config.domain }}.pid" --daemon sender
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

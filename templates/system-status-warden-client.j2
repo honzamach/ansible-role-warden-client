@@ -6,28 +6,31 @@
 #  changes will be overwritten without any notice !!! You have been warned !!!
 #
 #----------------------- <+++ansible-managed-file+++> -------------------------+
+{% for filer_config in hm_warden_client__filers %}
 
 #
-# Check certificate validity.
+# Warden filer {{ filer_config.domain }}: check certificate validity.
 #
-{{ hm_monitored__plugins_dir }}/check_ssl_cert --host localhost --file {{ hm_certified__cert_host_dir }}/warden.cert.pem | sed 's/:/ -/' | cut -f 1 -d \|;
-{% if hm_warden_client__sender_enabled %}
+{{ hm_monitored__plugins_dir }}/check_ssl_cert --host localhost --file {{ hm_certified__cert_host_dir }}/warden_filer_{{ filer_config.domain }}/warden.cert.pem | sed 's/:/ -/' | cut -f 1 -d \|;
+	{% if filer_config.sender_enabled %}
 
 #
-# Check Warden client sender status.
+# Warden filer {{ filer_config.domain }}: check sender status.
 #
-{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c /etc/warden_filer.cfg --pid_file /var/run/warden_filer/sender.pid --daemon sender" | sed 's/:/ -/' | cut -f 1 -d \|;
+{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file /var/run/warden_filer/sender_{{ filer_config.domain }}.pid --daemon sender" | sed 's/:/ -/' | cut -f 1 -d \|;
 echo -n "SENDER ERRS - "
-{{ hm_monitored__plugins_dir }}/check_file_count -d {{ hm_warden_client__sender_queue }}/errors -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }}
+{{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/errors -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }}
 echo -n "SENDER INCM - "
-{{ hm_monitored__plugins_dir }}/check_file_count -d {{ hm_warden_client__sender_queue }}/incoming -w {{ hm_warden_client__check_queue_size['w'] }} -c {{ hm_warden_client__check_queue_size['c'] }}
+{{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/incoming -w {{ hm_warden_client__check_queue_size['w'] }} -c {{ hm_warden_client__check_queue_size['c'] }}
 echo -n "SENDER TEMP - "
-{{ hm_monitored__plugins_dir }}/check_file_count -d {{ hm_warden_client__sender_queue }}/tmp -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }}
-{% endif %}
-{% if hm_warden_client__receiver_enabled %}
+{{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/tmp -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }}
+	{% endif %}
+	{% if filer_config.receiver_enabled %}
 
 #
-# Check Warden client receiver status.
+# Warden filer {{ filer_config.domain }}: check receiver status.
 #
-{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c /etc/warden_filer.cfg --pid_file /var/run/warden_filer/receiver.pid --daemon receiver" | sed 's/:/ -/' | cut -f 1 -d \|;
-{% endif %}
+{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file /var/run/warden_filer/receiver_{{ filer_config.domain }}.pid --daemon receiver" | sed 's/:/ -/' | cut -f 1 -d \|;
+	{% endif %}
+
+{% endfor %}

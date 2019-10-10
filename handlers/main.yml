@@ -1,18 +1,37 @@
 ---
 
-- name: Restart Warden receiver service
-  service:
-    name: warden_filer_receiver
-    state: restarted
-  when: hm_warden_client__receiver_enabled
-
-- name: Restart Warden sender service
-  service:
-    name: warden_filer_sender
-    state: restarted
-  when: hm_warden_client__sender_enabled
-
 - name: Restart NRPE service
   service:
     name: nagios-nrpe-server
     state: restarted
+
+- name: Restart systemd
+  systemd:
+    daemon_reload: yes
+
+#
+# PARAMETRIZED HANDLERS
+#
+# Ansible currently does not support adding parameters to handlers. In this case it seemed to be the 
+# showstopper, because here the service names are parametrized with the name of particular warden_filer
+# instance, for example ``warden_filer_cesnet_receiver.service``. The solution is to implement the 
+# conditional handler execution manually. Each task, that notifies ``Restart warden_filer receiver service``
+# or ``Restart warden_filer sender service`` must use ``register`` keyword to catch output. The flag for
+# performing service restart is then computed into the dictionary ``hmwc__to_restart``. Handlers here
+# loop through all currently defined ``hm_warden_client__filers`` and check whether the appropriate
+# services need to be restarted.
+#
+
+- name: Restart warden_filer receiver service
+  service:
+    name: "warden_filer_{{ item.domain }}_receiver"
+    state: restarted
+  loop: "{{ hm_warden_client__filers }}"
+  when: hm_warden_client__manage_services and item.receiver_enabled and hmwc__to_restart[item.domain]
+
+- name: Restart warden_filer sender service
+  service:
+    name: "warden_filer_{{ item.domain }}_sender"
+    state: restarted
+  loop: "{{ hm_warden_client__filers }}"
+  when: hm_warden_client__manage_services and item.sender_enabled and hmwc__to_restart[item.domain]

@@ -17,7 +17,7 @@
 #
 # Warden filer {{ filer_config.domain }}: check sender status.
 #
-{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file /var/run/warden_filer/sender_{{ filer_config.domain }}.pid --daemon sender" | sed 's/:/ -/' | cut -f 1 -d \|;
+{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file {{ hm_warden_client__run_path }}/sender_{{ filer_config.domain }}.pid --daemon sender" | sed 's/:/ -/' | cut -f 1 -d \|;
 echo -n "SENDER ERRS - "
 {{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/errors -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }}
 echo -n "SENDER INCM - "
@@ -30,7 +30,7 @@ echo -n "SENDER TEMP - "
 #
 # Warden filer {{ filer_config.domain }}: check receiver status.
 #
-{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file /var/run/warden_filer/receiver_{{ filer_config.domain }}.pid --daemon receiver" | sed 's/:/ -/' | cut -f 1 -d \|;
+{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file {{ hm_warden_client__run_path }}/receiver_{{ filer_config.domain }}.pid --daemon receiver" | sed 's/:/ -/' | cut -f 1 -d \|;
 	{% endif %}
 
 {% endfor %}

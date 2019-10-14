@@ -80,12 +80,26 @@ that can be overriden and adjusted as needed:
     * *Datatype:* ``string``
     * *Default value:* ``"/opt/warden3"``
 
-hm_warden_client__config_path
-    
+.. envvar:: hm_warden_client__config_path
+
     Path to configuration directory on target hosts, without trailing slash.
 
     * *Datatype:* ``string``
     * *Default value:* ``"/etc/warden_client"``
+
+.. envvar:: hm_warden_client__run_path
+
+    Path to run directory on target hosts, without trailing slash.
+
+    * *Datatype:* ``string``
+    * *Default value:* ``"/var/run/warden_client"``
+
+.. envvar:: hm_warden_client__lib_path
+
+    Path to lib directory on target hosts, without trailing slash.
+
+    * *Datatype:* ``string``
+    * *Default value:* ``"/var/lib/warden_client"``
 
 .. envvar:: hm_warden_client__manage_services
 

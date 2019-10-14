@@ -16,6 +16,16 @@ hm_warden_client__install_path: /opt/warden3
 hm_warden_client__config_path: /etc/warden_client
 
 #
+# Path to run directory on target hosts, without trailing slash.
+#
+hm_warden_client__run_path: /var/run/warden_filer
+
+#
+# Path to lib directory on target hosts, without trailing slash.
+#
+hm_warden_client__lib_path: /var/lib/warden_filer
+
+#
 # Enable/disable Warden client service management.
 #
 hm_warden_client__manage_services: false

@@ -16,8 +16,8 @@
     group: "{{ hm_warden_client__daemon_gid }}"
     mode: 0755
   with_items:
-    - /var/run/warden_filer
-    - /var/lib/warden_filer
+    - "{{ hm_warden_client__run_path }}"
+    - "{{ hm_warden_client__lib_path }}"
 
 - name: Ensure Warden3 utilities are executable
   file:

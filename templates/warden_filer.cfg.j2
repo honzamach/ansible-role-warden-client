@@ -25,13 +25,13 @@
     {% else %}
         "syslog": {"level": "debug", "facility": "local7"},
     {% endif %}
-        "idstore": "/var/lib/warden_filer/warden_filer_{{ filer_config.domain }}.id",
+        "idstore": "{{ hm_warden_client__lib_path }}/warden_filer_{{ filer_config.domain }}.id",
         "name": "{{ filer_config.node_name }}"
     },
 {% if filer_config.sender_enabled %}
     "sender": {
         "dir": "{{ filer_config.sender_queue|default(hm_warden_client__sender_queue) }}",
-        "pid_file": "/var/run/warden_filer/sender_{{ filer_config.domain }}.pid",
+        "pid_file": "{{ hm_warden_client__run_path }}/sender_{{ filer_config.domain }}.pid",
         "uid": {{ filer_config.daemon_uid|default(hm_warden_client__daemon_uid) }},
         "gid": {{ filer_config.daemon_gid|default(hm_warden_client__daemon_gid) }},
         "node": {
@@ -43,7 +43,7 @@
 {% if filer_config.receiver_enabled %}
     "receiver": {
         "dir": "{{ filer_config.receiver_queue|default(hm_warden_client__receiver_queue) }}",
-        "pid_file": "/var/run/warden_filer/receiver_{{ filer_config.domain }}.pid",
+        "pid_file": "{{ hm_warden_client__run_path }}/receiver_{{ filer_config.domain }}.pid",
         "uid": {{ filer_config.daemon_uid|default(hm_warden_client__daemon_uid) }},
         "gid": {{ filer_config.daemon_gid|default(hm_warden_client__daemon_gid) }},
         "file_limit": {{ filer_config.receiver_queue_limit|default(hm_warden_client__receiver_queue_limit) }},

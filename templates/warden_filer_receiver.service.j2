@@ -5,8 +5,10 @@ After=syslog.target network.target remote-fs.target nss-lookup.target
 [Service]
 Type=forking
 EnvironmentFile=/etc/default/warden_filer_{{ filer_config.domain }}_receiver
-PIDFile=/var/run/warden_filer/receiver_{{ filer_config.domain }}.pid
-ExecStart=/usr/local/bin/warden_filer.py -c "{{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg" --pid_file "/var/run/warden_filer/receiver_{{ filer_config.domain }}.pid" --daemon receiver
+PIDFile={{ hm_warden_client__run_path }}/receiver_{{ filer_config.domain }}.pid
+ExecStart=/usr/local/bin/warden_filer.py -c "{{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg" --pid_file "{{ hm_warden_client__run_path }}/receiver_{{ filer_config.domain }}.pid" --daemon receiver
+ExecStartPre=/bin/mkdir -p {{ hm_warden_client__run_path }}/
+ExecStartPre=/bin/chown -R {{ filer_config.daemon_uid|default(hm_warden_client__daemon_uid) }}:{{ filer_config.daemon_gid|default(hm_warden_client__daemon_gid) }} {{ hm_warden_client__run_path }}/
 Restart=on-failure
 
 [Install]

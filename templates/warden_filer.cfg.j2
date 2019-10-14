@@ -14,8 +14,8 @@
     "warden": {
         "url": "{{ filer_config.server_url|default(hm_warden_client__server_url) }}",
         "cafile": "{{ filer_config.ca_cert|default(hm_warden_client__ca_cert) }}",
-        "keyfile": "{{ hm_certified__cert_host_dir }}/warden_filer_{{ filer_config.domain }}/warden.key.pem",
-        "certfile": "{{ hm_certified__cert_host_dir }}/warden_filer_{{ filer_config.domain }}/warden.cert.pem",
+        "keyfile": "{{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}/key.pem",
+        "certfile": "{{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}/cert.pem",
         "timeout": 30,
         "send_events_limit": 2000,
         "get_events_limit": 2000,

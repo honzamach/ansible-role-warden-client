@@ -11,7 +11,7 @@
 #
 # Warden filer {{ filer_config.domain }}: check certificate validity.
 #
-{{ hm_monitored__plugins_dir }}/check_ssl_cert --host localhost --file {{ hm_certified__cert_host_dir }}/warden_filer_{{ filer_config.domain }}/warden.cert.pem | sed 's/:/ -/' | cut -f 1 -d \|;
+{{ hm_monitored__plugins_dir }}/check_ssl_cert --host localhost --file {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}/cert.pem | sed 's/:/ -/' | cut -f 1 -d \|;
 	{% if filer_config.sender_enabled %}
 
 #

@@ -41,7 +41,6 @@ Dependencies
 
 This role is dependent on following roles:
 
-* :ref:`certified <section-role-certified>` (soft)
 * :ref:`monitored <section-role-monitored>` (soft)
 
 No other roles have direct dependency on this role.
@@ -218,10 +217,6 @@ Foreign variables
 
 This role makes use of following foreign variables, that are defined within other
 roles:
-
-:envvar:`hm_certified__cert_host_dir`
-
-    Warden filer will be configured to use custom certificates.
 
 :envvar:`rf_monitored__plugins_dir`
 

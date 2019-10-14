@@ -1,5 +1,41 @@
 ---
 
+- name: Managing warden_filer certificate directories
+  file:
+    path: "{{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Uploading warden_filer certificates
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}/{{ item.path }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_filetree: "vault/host_files/{{ inventory_hostname }}/warden_filer_{{ filer_config.domain }}"
+  when: item.state == 'file'
+  # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
+  register: hmwc__regcrt
+  notify:
+    - Restart warden_filer receiver service
+    - Restart warden_filer sender service
+
+- name: Looking for any Warden client certificate files
+  find:
+    paths: "{{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}"
+    patterns: '*.pem'
+    file_type: file
+  register: hmwc__regcrt_cnt
+
+- name: Checking for existence of any Warden client certificate files 
+  fail:
+      msg: "There are no Warden client certificates in {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}"
+  ignore_errors: yes
+  when: not hmwc__regcrt_cnt.matched
+
 - name: Configuring Warden filer
   template:
     src: "{{ item }}"
@@ -97,7 +133,7 @@
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
 - name: Calculate the need for service restart
   set_fact:
-    hmwc__to_restart: "{{ hmwc__to_restart|default({})|combine({filer_config.name: hmwc__regcfg.changed or hmwc__regdfr.changed or hmwc__regdfs.changed or hmwc__reginr.changed or hmwc__regins.changed})}}"
+    hmwc__to_restart: "{{ hmwc__to_restart|default({})|combine({filer_config.domain: hmwc__regcrt.changed or hmwc__regcfg.changed or hmwc__regdfr.changed or hmwc__regdfs.changed or hmwc__reginr.changed or hmwc__regins.changed})}}"
 
 - name: Status of warden_filer services that need to be restarted
   debug:

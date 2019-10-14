@@ -68,6 +68,7 @@
     backup: yes
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
   register: hmwc__regdfr
+  when: filer_config.receiver_enabled
   notify:
     - Restart warden_filer receiver service
     - Restart warden_filer sender service
@@ -82,6 +83,7 @@
     backup: yes
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
   register: hmwc__regdfs
+  when: filer_config.sender_enabled
   notify:
     - Restart warden_filer receiver service
     - Restart warden_filer sender service
@@ -104,6 +106,7 @@
     - "warden_filer_receiver.service.j2"
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
   register: hmwc__reginr
+  when: filer_config.receiver_enabled
   notify:
     - Restart systemd
     - Restart warden_filer receiver service
@@ -126,6 +129,7 @@
     - "warden_filer_sender.service.j2"
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
   register: hmwc__regins
+  when: filer_config.sender_enabled
   notify:
     - Restart systemd
     - Restart warden_filer sender service
@@ -133,7 +137,7 @@
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
 - name: Calculate the need for service restart
   set_fact:
-    hmwc__to_restart: "{{ hmwc__to_restart|default({})|combine({filer_config.domain: hmwc__regcrt.changed or hmwc__regcfg.changed or hmwc__regdfr.changed or hmwc__regdfs.changed or hmwc__reginr.changed or hmwc__regins.changed})}}"
+    hmwc__to_restart: "{{ hmwc__to_restart|default({})|combine({filer_config.domain: hmwc__regcrt.changed or hmwc__regcfg.changed or (hmwc__regdfr and hmwc__regdfr.changed) or (hmwc__regdfs and hmwc__regdfs.changed) or (hmwc__reginr and hmwc__reginr.changed) or (hmwc__regins and hmwc__regins.changed)})}}"
 
 - name: Status of warden_filer services that need to be restarted
   debug:

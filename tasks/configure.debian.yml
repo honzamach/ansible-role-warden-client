@@ -12,8 +12,8 @@
   file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ hm_warden_client__daemon_uid }}"
-    group: "{{ hm_warden_client__daemon_gid }}"
+    owner: "{{ hm_warden_client__daemon_uid | string }}"
+    group: "{{ hm_warden_client__daemon_gid | string }}"
     mode: 0755
   with_items:
     - "{{ hm_warden_client__run_path }}"

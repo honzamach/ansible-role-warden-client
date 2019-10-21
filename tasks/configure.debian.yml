@@ -46,12 +46,11 @@
     group: root
     mode: 0644
   with_first_found:
-    - "host_files/{{ inventory_hostname }}/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "host_files/{{ inventory_hostname }}/nrpe_warden-client.cfg.j2"
-    - "group_files/servers-{{ msms_server_type }}/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-{{ msms_server_type }}/nrpe_warden-client.cfg.j2"
-    - "group_files/servers/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers/nrpe_warden-client.cfg.j2"
+    - "inventory/host_files/{{ inventory_hostname }}/honzamach.warden_client/nrpe_warden-client.cfg.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/nrpe_warden-client.cfg.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/nrpe_warden-client.cfg.j2"
     - "nrpe_warden-client.cfg.{{ ansible_lsb['codename'] }}.j2"
     - "nrpe_warden-client.cfg.j2"
   notify: Restart NRPE service
@@ -65,11 +64,11 @@
     group: root
     mode: 0755
   with_first_found:
-    - "host_files/{{ inventory_hostname }}/system-status-warden-client.j2"
-    - "group_files/servers-{{ msms_server_type }}/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-{{ msms_server_type }}/system-status-warden-client.j2"
-    - "group_files/servers/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers/system-status-warden-client.j2"
+    - "inventory/host_files/{{ inventory_hostname }}/honzamach.warden_client/system-status-warden-client.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/system-status-warden-client.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/system-status-warden-client.j2"
     - "system-status-warden-client.{{ ansible_lsb['codename'] }}.j2"
     - "system-status-warden-client.j2"
   when: '"servers_commonenv" in group_names'

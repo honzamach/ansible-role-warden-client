@@ -15,7 +15,7 @@
     owner: root
     group: root
     mode: "{{ item.mode }}"
-  with_filetree: "vault/host_files/{{ inventory_hostname }}/warden_filer_{{ filer_config.domain }}"
+  with_filetree: "vault/inventory/host_files/{{ inventory_hostname }}/warden_filer_{{ filer_config.domain }}"
   when: item.state == 'file'
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
   register: hmwc__regcrt
@@ -45,11 +45,11 @@
     mode: 0644
     backup: yes
   with_first_found:
-    - "host_files/{{ inventory_hostname }}/warden_filer.cfg.j2"
-    - "group_files/servers-{{ msms_server_type }}/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-{{ msms_server_type }}/warden_filer.cfg.j2"
-    - "group_files/servers/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers/warden_filer.cfg.j2"
+    - "inventory/host_files/{{ inventory_hostname }}/honzamach.warden_client/warden_filer.cfg.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/warden_filer.cfg.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/warden_filer.cfg.j2"
     - "warden_filer.cfg.{{ ansible_lsb['codename'] }}.j2"
     - "warden_filer.cfg.j2"
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
@@ -97,11 +97,11 @@
     mode: 0755
     backup: yes
   with_first_found:
-    - "host_files/{{ inventory_hostname }}/warden_filer_receiver.service.j2"
-    - "group_files/servers-{{ msms_server_type }}/warden_filer_receiver.service.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-{{ msms_server_type }}/warden_filer_receiver.service.j2"
-    - "group_files/servers/warden_filer_receiver.service.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers/warden_filer_receiver.service.j2"
+    - "inventory/host_files/{{ inventory_hostname }}/honzamach.warden_client/warden_filer_receiver.service.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/warden_filer_receiver.service.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/warden_filer_receiver.service.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/warden_filer_receiver.service.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/warden_filer_receiver.service.j2"
     - "warden_filer_receiver.service.{{ ansible_lsb['codename'] }}.j2"
     - "warden_filer_receiver.service.j2"
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
@@ -120,11 +120,11 @@
     mode: 0755
     backup: yes
   with_first_found:
-    - "host_files/{{ inventory_hostname }}/warden_filer_sender.service.j2"
-    - "group_files/servers-{{ msms_server_type }}/warden_filer_sender.service.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers-{{ msms_server_type }}/warden_filer_sender.service.j2"
-    - "group_files/servers/warden_filer_sender.service.{{ ansible_lsb['codename'] }}.j2"
-    - "group_files/servers/warden_filer_sender.service.j2"
+    - "inventory/host_files/{{ inventory_hostname }}/honzamach.warden_client/warden_filer_sender.service.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/warden_filer_sender.service.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/warden_filer_sender.service.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/warden_filer_sender.service.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/warden_filer_sender.service.j2"
     - "warden_filer_sender.service.{{ ansible_lsb['codename'] }}.j2"
     - "warden_filer_sender.service.j2"
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.

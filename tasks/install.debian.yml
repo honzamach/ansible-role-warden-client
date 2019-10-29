@@ -9,7 +9,7 @@
   git:
     repo: "{{ hm_warden_client__repo_url }}"
     dest: "{{ hm_warden_client__install_path }}"
-    version: master
+    version: "{{ hm_warden_client__repo_branch }}"
     accept_hostkey: yes
 
 #

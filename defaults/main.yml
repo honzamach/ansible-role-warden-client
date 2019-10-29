@@ -6,6 +6,11 @@
 hm_warden_client__repo_url: https://homeproj.cesnet.cz/git/warden.git/
 
 #
+# Default Git repository branch from which to install Warden client.
+#
+hm_warden_client__repo_branch: master
+
+#
 # Installation path on target hosts, without trailing slash.
 #
 hm_warden_client__install_path: /opt/warden3

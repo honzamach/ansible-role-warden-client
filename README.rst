@@ -203,7 +203,7 @@ Additionally this role makes use of following built-in Ansible variables:
 Configuration of warden_filer instances
 --------------------------------------------------------------------------------
 
-Following is and example of 
+Following is and example of possible Warden filer configuration::
 
     hm_warden_client__filers:
         # Domain for this warden_filer instance. May be empty in case there is only one filer installation.
@@ -232,7 +232,7 @@ Foreign variables
 This role makes use of following foreign variables, that are defined within other
 roles:
 
-:envvar:`rf_monitored__plugins_dir`
+:envvar:`hm_monitored__plugins_dir`
 
     Custom monitoring commands will be enabled, so the path to the plugin directory is needed.
 

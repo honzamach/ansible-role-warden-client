@@ -7,9 +7,12 @@
 #
 #----------------------- <+++ansible-managed-file+++> -------------------------+
 
-echo "+------------------------------------------------------------------------------+"
-echo "| Warden client status                                                         |"
-echo "+------------------------------------------------------------------------------+"
+# Load shared library.
+. /opt/msms/lib/libmsms.sh
+
+
+widget_separator_text "WARDEN CLIENT" "${MSMS_SEPARATOR_GLYPH}" "${MSMS_SEPARATOR_PAD}" "${MSMS_FLAG_COLOR}" "${MSMS_WIDGET_WIDTH}"
+
 
 {% for filer_config in hm_warden_client__filers %}
 
@@ -17,20 +20,20 @@ echo "+-------------------------------------------------------------------------
 # Warden filer {{ filer_config.domain | upper }}: check certificate validity.
 #
 echo -n "{{ filer_config.domain | upper  }} "
-{{ hm_monitored__plugins_dir }}/check_ssl_cert --host localhost --file {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}/cert.pem | sed 's/:/ -/' | cut -f 1 -d \|;
+{{ hm_monitored__plugins_dir }}/check_ssl_cert --host localhost --file {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}/cert.pem | sed 's/:/ -/' | cut -f 1 -d \| | nrpe_status_colorize "${MSMS_FLAG_COLOR}"
 	{% if filer_config.sender_enabled %}
 
 #
 # Warden filer {{ filer_config.domain | upper  }}: check sender status.
 #
 echo -n "{{ filer_config.domain | upper  }} "
-{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file {{ hm_warden_client__run_path }}/sender_{{ filer_config.domain }}.pid --daemon sender" | sed 's/:/ -/' | cut -f 1 -d \| | cut -f 1 -d ,;
+{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file {{ hm_warden_client__run_path }}/sender_{{ filer_config.domain }}.pid --daemon sender" | sed 's/:/ -/' | cut -f 1 -d \| | cut -f 1 -d , | nrpe_status_colorize "${MSMS_FLAG_COLOR}"
 echo -n "{{ filer_config.domain | upper  }} SENDER ERRS - "
-{{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/errors -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }}
+{{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/errors -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }} | nrpe_status_colorize "${MSMS_FLAG_COLOR}"
 echo -n "{{ filer_config.domain | upper  }} SENDER INCM - "
-{{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/incoming -w {{ hm_warden_client__check_queue_size['w'] }} -c {{ hm_warden_client__check_queue_size['c'] }}
+{{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/incoming -w {{ hm_warden_client__check_queue_size['w'] }} -c {{ hm_warden_client__check_queue_size['c'] }} | nrpe_status_colorize "${MSMS_FLAG_COLOR}"
 echo -n "{{ filer_config.domain | upper  }} SENDER TEMP - "
-{{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/tmp -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }}
+{{ hm_monitored__plugins_dir }}/check_file_count -d {{ filer_config.sender_queue }}/tmp -w {{ hm_warden_client__check_queue_dirs['w'] }} -c {{ hm_warden_client__check_queue_dirs['c'] }} | nrpe_status_colorize "${MSMS_FLAG_COLOR}"
 	{% endif %}
 	{% if filer_config.receiver_enabled %}
 
@@ -38,7 +41,7 @@ echo -n "{{ filer_config.domain | upper  }} SENDER TEMP - "
 # Warden filer {{ filer_config.domain | upper  }}: check receiver status.
 #
 echo -n "{{ filer_config.domain | upper  }} "
-{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file {{ hm_warden_client__run_path }}/receiver_{{ filer_config.domain }}.pid --daemon receiver" | sed 's/:/ -/' | cut -f 1 -d \| | cut -f 1 -d ,;
+{{ hm_monitored__plugins_dir }}/check_procs -c 1:1 -C warden_filer.py -a "/usr/bin/python /usr/local/bin/warden_filer.py -c {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}.cfg --pid_file {{ hm_warden_client__run_path }}/receiver_{{ filer_config.domain }}.pid --daemon receiver" | sed 's/:/ -/' | cut -f 1 -d \| | cut -f 1 -d , | nrpe_status_colorize "${MSMS_FLAG_COLOR}"
 	{% endif %}
 
 {% endfor %}

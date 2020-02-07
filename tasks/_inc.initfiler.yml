@@ -15,7 +15,7 @@
     owner: root
     group: root
     mode: "{{ item.mode }}"
-  with_filetree: "vault/inventory/host_files/{{ inventory_hostname }}/warden_filer_{{ filer_config.domain }}"
+  with_filetree: "inventory/host_files/{{ inventory_hostname }}/honzamach.warden_client/warden_filer_{{ filer_config.domain }}"
   when: item.state == 'file'
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
   register: hmwc__regcrt
@@ -30,7 +30,7 @@
     file_type: file
   register: hmwc__regcrt_cnt
 
-- name: Checking for existence of any Warden client certificate files 
+- name: Checking for existence of any Warden client certificate files
   fail:
       msg: "There are no Warden client certificates in {{ hm_warden_client__config_path }}/warden_filer_{{ filer_config.domain }}"
   ignore_errors: yes
@@ -146,8 +146,8 @@
     - debug
 
 - name: Removing unnecessary files - warden_filer receiver
-  file: 
-    path: "{{ item }}" 
+  file:
+    path: "{{ item }}"
     state: absent
   with_list:
     - "/etc/default/warden_filer_{{ filer_config.domain }}_receiver"
@@ -157,8 +157,8 @@
     - Restart systemd
 
 - name: Removing unnecessary files - warden_filer sender
-  file: 
-    path: "{{ item }}" 
+  file:
+    path: "{{ item }}"
     state: absent
   with_list:
     - "/etc/default/warden_filer_{{ filer_config.domain }}_sender"

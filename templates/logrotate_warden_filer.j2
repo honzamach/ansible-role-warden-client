@@ -1,0 +1,22 @@
+#----------------------- <+++ansible-managed-file+++> -------------------------+
+#
+#                           IMPORTANT WARNING
+#
+#   This file is managed remotely by Ansible orchestration tool. Any local
+#         changes will be overwritten !!! You have been warned !!!
+#
+#----------------------- <+++ansible-managed-file+++> -------------------------+
+
+{{ hm_warden_client__logdir }}/warden_filer_{{ filer_config.domain }}.log {
+{% for option in hm_warden_client__logrotate_options %}
+    {{ option }}
+{% endfor %}
+    postrotate
+{% if filer_config.receiver_enabled %}
+        systemctl restart warden_filer_{{ filer_config.domain }}_receiver.service
+{% endif %}
+{% if filer_config.sender_enabled %}
+        systemctl restart warden_filer_{{ filer_config.domain }}_sender.service
+{% endif %}
+    endscript"
+}

@@ -134,6 +134,24 @@
     - Restart systemd
     - Restart warden_filer sender service
 
+- name: "Warden filer {{ filer_config.domain }}: Configuring log file rotation"
+  template:
+    src: "{{ item }}"
+    dest: "/etc/logrotate.d/warden_filer_{{ filer_config.domain }}"
+    owner: root
+    group: root
+    mode: "0644"
+  with_first_found:
+    - "inventory/host_files/{{ inventory_hostname }}/honzamach.warden_client/logrotate_warden_filer.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/host_files/{{ inventory_hostname }}/honzamach.warden_client/logrotate_warden_filer.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/logrotate_warden_filer.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.warden_client/logrotate_warden_filer.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/logrotate_warden_filer.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers/honzamach.warden_client/logrotate_warden_filer.j2"
+    - "logrotate_warden_filer.{{ ansible_lsb['codename'] }}.j2"
+    - "logrotate_warden_filer.j2"
+  when: "'log_to_file' in filer_config and filer_config.log_to_file"
+
   # Parametrized handlers: Please see the ``handlers/main.yml`` file for explanation of this hack.
 - name: "Warden filer {{ filer_config.domain }}: Calculating the need for service restart"
   set_fact:

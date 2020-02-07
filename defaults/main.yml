@@ -1,5 +1,9 @@
 ---
 
+hm_warden_client__daemon_uid:
+
+hm_warden_client__daemon_gid:
+
 hm_warden_client__repo_url: https://homeproj.cesnet.cz/git/warden.git/
 
 hm_warden_client__repo_branch: master
@@ -12,13 +16,22 @@ hm_warden_client__run_path: /var/run/warden_filer
 
 hm_warden_client__lib_path: /var/lib/warden_filer
 
+hm_warden_client__logdir: "/var/log"
+
+hm_warden_client__logrotate_options:
+  - "daily"
+  - "rotate 56"
+  - "missingok"
+  - "notifempty"
+  - "copytruncate"
+  - "compress"
+  - "delaycompress"
+  - "dateext"
+  - "su {{ hm_warden_client__daemon_uid }} {{ hm_warden_client__daemon_gid }}"
+
 hm_warden_client__manage_services: false
 
 hm_warden_client__server_url: https://warden-hub.cesnet.cz/warden3
-
-hm_warden_client__daemon_uid:
-
-hm_warden_client__daemon_gid:
 
 hm_warden_client__sender_queue: /var/warden/sender/queue
 

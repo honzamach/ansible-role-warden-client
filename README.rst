@@ -99,6 +99,22 @@ Configuration variables
 Internal role variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. envvar:: hm_warden_client__daemon_uid
+
+    Default user account under which to run warden_filer.
+    May be overridden with ``hm_warden_client__filers.#.daemon_uid`` for particular instance of warden_filer.
+
+    * *Datatype:* ``integer``
+    * *Default:* ``null``
+
+.. envvar:: hm_warden_client__daemon_gid
+
+    Default group account under which to run warden_filer.
+    May be overridden with ``hm_warden_client__filers.#.daemon_gid`` for particular instance of warden_filer.
+
+    * *Datatype:* ``integer``
+    * *Default:* ``null``
+
 .. envvar:: hm_warden_client__repo_url
 
     Default URL of the Git repository from which to install Warden client.
@@ -134,6 +150,20 @@ Internal role variables
     * *Datatype:* ``string``
     * *Default:* ``"/var/lib/warden_client"``
 
+.. envvar:: hm_warden_client__logdir
+
+    Path to log directory.
+
+    * *Type:* ``string``
+    * *Default:* ``"/var/log"``
+
+.. envvar:: hm_warden_client__logrotate_options
+
+    Log rotation options.
+
+    * *Type:* ``list of strings``
+    * *Default:* (please see YAML file ``defaults/main.yml``)
+
 .. envvar:: hm_warden_client__manage_services
 
     Enable service management.
@@ -148,22 +178,6 @@ Internal role variables
 
     * *Datatype:* ``string``
     * *Default:* ``"https://warden-hub.cesnet.cz/warden3"``
-
-.. envvar:: hm_warden_client__daemon_uid
-
-    Default user account under which to run warden_filer.
-    May be overridden with ``hm_warden_client__filers.#.daemon_uid`` for particular instance of warden_filer.
-
-    * *Datatype:* ``integer``
-    * *Default:* (undefined)
-
-.. envvar:: hm_warden_client__daemon_gid
-
-    Default group account under which to run warden_filer.
-    May be overridden with ``hm_warden_client__filers.#.daemon_gid`` for particular instance of warden_filer.
-
-    * *Datatype:* ``integer``
-    * *Default:* (undefined)
 
 .. envvar:: hm_warden_client__sender_queue
 

@@ -1,100 +1,41 @@
 ---
 
-#
-# Default URL of the Git repository from which to install Warden client.
-#
 hm_warden_client__repo_url: https://homeproj.cesnet.cz/git/warden.git/
 
-#
-# Default Git repository branch from which to install Warden client.
-#
 hm_warden_client__repo_branch: master
 
-#
-# Installation path on target hosts, without trailing slash.
-#
 hm_warden_client__install_path: /opt/warden3
 
-#
-# Path to configuration directory on target hosts, without trailing slash.
-#
 hm_warden_client__config_path: /etc/warden_client
 
-#
-# Path to run directory on target hosts, without trailing slash.
-#
 hm_warden_client__run_path: /var/run/warden_filer
 
-#
-# Path to lib directory on target hosts, without trailing slash.
-#
 hm_warden_client__lib_path: /var/lib/warden_filer
 
-#
-# Enable/disable Warden client service management.
-#
 hm_warden_client__manage_services: false
 
-#
-# Default URL of the Warden server to which send or from which to receive IDEA messages. 
-# May be overridden with ``hm_warden_client__filers.#.server_url`` for particular instance of warden_filer.
-#
 hm_warden_client__server_url: https://warden-hub.cesnet.cz/warden3
 
-#
-# Default user account under which to run warden_filer.
-# May be overridden with ``hm_warden_client__filers.#.daemon_uid`` for particular instance of warden_filer.
-#
 hm_warden_client__daemon_uid:
 
-#
-# Default group account under which to run warden_filer.
-# May be overridden with ``hm_warden_client__filers.#.daemon_gid`` for particular instance of warden_filer.
-#
 hm_warden_client__daemon_gid:
 
-#
-# Default queue directory for sending warden_filer.
-# May be overridden with ``hm_warden_client__filers.#.sender_queue`` for particular instance of warden_filer.
-#
 hm_warden_client__sender_queue: /var/warden/sender/queue
 
-#
-# Default queue directory for receiving warden_filer.
-# May be overridden with ``hm_warden_client__filers.#.receiver_queue`` for particular instance of warden_filer.
-#
 hm_warden_client__receiver_queue: /var/mentat/spool/mentat-inspector.py
 
-#
-# Default queue limit for receiving warden_filer.
-# May be overridden with ``hm_warden_client__filers.#.receiver_queue_limit`` for particular instance of warden_filer.
-#
 hm_warden_client__receiver_queue_limit: 5000
 
-#
-# Default CA certificate for Warden server verification.
-# May be overridden with ``hm_warden_client__filers.#.ca_cert`` for particular instance of warden_filer.
-#
 hm_warden_client__ca_cert: /etc/ssl/certs/ca-certificates.crt
 
-#
-# Monitoring configuration setting for checking queue size in the *incoming* directory.
-#
 hm_warden_client__check_queue_size:
   w: 2000
   c: 5000
 
-#
-# Monitoring configuration setting for checking queue size in other than *incoming*
-# directories.
-#
 hm_warden_client__check_queue_dirs:
   w: 100
   c: 1000
 
-#
-# List of configurations for warden_filer instances.
-#
 hm_warden_client__filers:
 #    # Domain for this warden_filer instance. May be empty in case there is only one filer installation.
 #  - domain: cesnet

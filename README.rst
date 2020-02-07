@@ -3,19 +3,12 @@
 Role **warden_client**
 ================================================================================
 
-Ansible role for convenient installation of the `Warden <https://warden.cesnet.cz/>`__
-client library and warden_filer utility.
-
 * `Ansible Galaxy page <https://galaxy.ansible.com/honzamach/warden_client>`__
 * `GitHub repository <https://github.com/honzamach/ansible-role-warden-client>`__
 * `Travis CI page <https://travis-ci.org/honzamach/ansible-role-warden-client>`__
 
-
-Description
---------------------------------------------------------------------------------
-
-This role is responsible for installation and configuration of Warden client 
-library on target host. Client library is installed from official Git repository,
+This role is responsible for installation and configuration of `Warden <https://warden.cesnet.cz/>`__
+client library on target host. Client library is installed from official Git repository,
 which is currently probably the best option, mainly because it provides easy
 way to uprgade the software.
 
@@ -25,16 +18,42 @@ for sending and receiving filer with common server connection and logging option
 You may however configure additional instance with different connection parameters
 to enable communication with another Warden server.
 
-.. note::
+**Table of Contents:**
 
-    This role supports the :ref:`template customization <section-overview-customize-templates>` feature.
+* :ref:`section-role-warden-client-installation`
+* :ref:`section-role-warden-client-dependencies`
+* :ref:`section-role-warden-client-usage`
+* :ref:`section-role-warden-client-variables`
+* :ref:`section-role-warden-client-filercfgs`
+* :ref:`section-role-warden-client-files`
+* :ref:`section-role-warden-client-author`
+
+This role is part of the `MSMS <https://github.com/honzamach/msms>`__ package.
+Some common features are documented in its :ref:`manual <section-manual>`.
 
 
-Requirements
+.. _section-role-warden-client-installation:
+
+Installation
 --------------------------------------------------------------------------------
 
-This role does not have any special requirements.
+To install the role `honzamach.warden_client <https://galaxy.ansible.com/honzamach/warden_client>`__
+from `Ansible Galaxy <https://galaxy.ansible.com/>`__ please use variation of
+following command::
 
+    ansible-galaxy install honzamach.warden_client
+
+To install the role directly from `GitHub <https://github.com>`__ by cloning the
+`ansible-role-warden-client <https://github.com/honzamach/ansible-role-warden-client>`__
+repository please use variation of following command::
+
+    git clone https://github.com/honzamach/ansible-role-warden-client.git honzamach.warden_client
+
+Currently the advantage of using direct Git cloning is the ability to easily update
+the role when new version comes out.
+
+
+.. _section-role-warden-client-dependencies:
 
 Dependencies
 --------------------------------------------------------------------------------
@@ -46,75 +65,89 @@ This role is dependent on following roles:
 No other roles have direct dependency on this role.
 
 
-Managed files
+.. _section-role-warden-client-usage:
+
+Usage
 --------------------------------------------------------------------------------
 
-This role directly manages content of following files on target system:
+Example content of inventory file ``inventory``::
 
-* ``/etc/warden_filer/warden_filer_{{ filer.domain }}.cfg``
-* ``/etc/systemd/system/warden_filer_{{ filer.domain }}_receiver.service``
-* ``/etc/systemd/system/warden_filer_{{ filer.domain }}_sender.service``
-* ``/etc/default/warden_filer_{{ filer.domain }}_receiver``
-* ``/etc/default/warden_filer_{{ filer.domain }}_sender``
-* ``/etc/nagios/nrpe.d/warden-client.cfg``
-* ``/opt/system-status/system-status.d/30-warden-client``
+    [servers_warden_client]
+    your-server
+
+Example content of role playbook file ``role_playbook.yml``::
+
+    - hosts: servers_warden_client
+      remote_user: root
+      roles:
+        - role: honzamach.warden_client
+      tags:
+        - role-warden_client
+
+Example usage::
+
+    # Run everything:
+    ansible-playbook --ask-vault-pass --inventory inventory role_playbook.yml
 
 
-Role variables
+.. _section-role-warden-client-variables:
+
+Configuration variables
 --------------------------------------------------------------------------------
 
-There are following internal role variables defined in ``defaults/main.yml`` file,
-that can be overriden and adjusted as needed:
+
+Internal role variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. envvar:: hm_warden_client__repo_url
 
     Default URL of the Git repository from which to install Warden client.
 
     * *Datatype:* ``string``
-    * *Default value:* ``"https://homeproj.cesnet.cz/git/warden.git/"``
+    * *Default:* ``"https://homeproj.cesnet.cz/git/warden.git/"``
 
 .. envvar:: hm_warden_client__install_path
 
     Installation path on target hosts, without trailing slash.
 
     * *Datatype:* ``string``
-    * *Default value:* ``"/opt/warden3"``
+    * *Default:* ``"/opt/warden3"``
 
 .. envvar:: hm_warden_client__config_path
 
     Path to configuration directory on target hosts, without trailing slash.
 
     * *Datatype:* ``string``
-    * *Default value:* ``"/etc/warden_client"``
+    * *Default:* ``"/etc/warden_client"``
 
 .. envvar:: hm_warden_client__run_path
 
     Path to run directory on target hosts, without trailing slash.
 
     * *Datatype:* ``string``
-    * *Default value:* ``"/var/run/warden_client"``
+    * *Default:* ``"/var/run/warden_client"``
 
 .. envvar:: hm_warden_client__lib_path
 
     Path to lib directory on target hosts, without trailing slash.
 
     * *Datatype:* ``string``
-    * *Default value:* ``"/var/lib/warden_client"``
+    * *Default:* ``"/var/lib/warden_client"``
 
 .. envvar:: hm_warden_client__manage_services
 
     Enable service management.
 
     * *Datatype:* ``bool``
-    * *Default value:* ``false``
+    * *Default:* ``false``
 
 .. envvar:: hm_warden_client__server_url
 
-    Default URL of the Warden server to which send or from which to receive IDEA messages. 
+    Default URL of the Warden server to which send or from which to receive IDEA messages.
     May be overridden with ``hm_warden_client__filers.#.server_url`` for particular instance of warden_filer.
 
     * *Datatype:* ``string``
-    * *Default value:* ``"https://warden-hub.cesnet.cz/warden3"``
+    * *Default:* ``"https://warden-hub.cesnet.cz/warden3"``
 
 .. envvar:: hm_warden_client__daemon_uid
 
@@ -122,7 +155,7 @@ that can be overriden and adjusted as needed:
     May be overridden with ``hm_warden_client__filers.#.daemon_uid`` for particular instance of warden_filer.
 
     * *Datatype:* ``integer``
-    * *Default value:* (undefined)
+    * *Default:* (undefined)
 
 .. envvar:: hm_warden_client__daemon_gid
 
@@ -130,7 +163,7 @@ that can be overriden and adjusted as needed:
     May be overridden with ``hm_warden_client__filers.#.daemon_gid`` for particular instance of warden_filer.
 
     * *Datatype:* ``integer``
-    * *Default value:* (undefined)
+    * *Default:* (undefined)
 
 .. envvar:: hm_warden_client__sender_queue
 
@@ -138,7 +171,7 @@ that can be overriden and adjusted as needed:
     May be overridden with ``hm_warden_client__filers.#.sender_queue`` for particular instance of warden_filer.
 
     * *Datatype:* ``directory``
-    * *Default value:* ``/var/warden/sender/queue``
+    * *Default:* ``/var/warden/sender/queue``
 
 .. envvar:: hm_warden_client__receiver_queue
 
@@ -146,7 +179,7 @@ that can be overriden and adjusted as needed:
     May be overridden with ``hm_warden_client__filers.#.receiver_queue`` for particular instance of warden_filer.
 
     * *Datatype:* ``directory``
-    * *Default value:* ``/var/mentat/spool/mentat-inspector.py``
+    * *Default:* ``/var/mentat/spool/mentat-inspector.py``
 
 .. envvar:: hm_warden_client__receiver_queue_limit
 
@@ -154,7 +187,7 @@ that can be overriden and adjusted as needed:
     May be overridden with ``hm_warden_client__filers.#.receiver_queue_limit`` for particular instance of warden_filer.
 
     * *Datatype:* ``integer``
-    * *Default value:* ``5000``
+    * *Default:* ``5000``
 
 .. envvar:: hm_warden_client__ca_cert
 
@@ -162,7 +195,7 @@ that can be overriden and adjusted as needed:
     May be overridden with ``hm_warden_client__filers.#.ca_cert`` for particular instance of warden_filer.
 
     * *Datatype:* ``file``
-    * *Default value:* ``/etc/ssl/certs/ca-certificates.crt``
+    * *Default:* ``/etc/ssl/certs/ca-certificates.crt``
 
 .. envvar:: hm_warden_client__check_queue_size
 
@@ -186,16 +219,39 @@ that can be overriden and adjusted as needed:
     * *Datatype:* ``dict``
     * *Default:* (undefined)
 
-Additionally this role makes use of following built-in Ansible variables:
+
+Foreign variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This role makes use of following foreign variables, that are defined within other
+roles:
+
+:envvar:`hm_monitored__plugins_dir`
+
+    Custom monitoring commands will be enabled, so the path to the plugin directory is needed.
+
+
+Built-in Ansible variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. envvar:: ansible_lsb['codename']
 
-    Debian distribution codename is used for :ref:`template customization <section-overview-customize-templates>`
+    Debian distribution codename is used for :ref:`template customization <section-overview-role-customize-templates>`
     feature.
 
-.. envvar:: group_names
 
-    See section *Group memberships* below for details.
+Group memberships
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **servers_monitored**
+
+  In case the target server is member of this group Nagios monitoring is automagically
+  configured for the Warden client installation.
+
+* **servers_commonenv**
+
+  In case the target server is member of this group system status script is automagically
+  configured for the Warden client installation.
 
 
 .. _section-role-warden-client-filercfgs:
@@ -226,103 +282,28 @@ Following is and example of possible Warden filer configuration::
         receiver_queue: /var/mentat/spool/mentat-inspector.py
 
 
-Foreign variables
+.. _section-role-warden-client-files:
+
+Managed files
 --------------------------------------------------------------------------------
 
-This role makes use of following foreign variables, that are defined within other
-roles:
+This role directly manages content of following files on target system:
 
-:envvar:`hm_monitored__plugins_dir`
+* ``/etc/warden_filer/warden_filer_{{ filer.domain }}.cfg``
+* ``/etc/systemd/system/warden_filer_{{ filer.domain }}_receiver.service``
+* ``/etc/systemd/system/warden_filer_{{ filer.domain }}_sender.service``
+* ``/etc/default/warden_filer_{{ filer.domain }}_receiver``
+* ``/etc/default/warden_filer_{{ filer.domain }}_sender``
+* ``/etc/nagios/nrpe.d/warden-client.cfg``
+* ``/opt/system-status/system-status.d/30-warden-client``
 
-    Custom monitoring commands will be enabled, so the path to the plugin directory is needed.
 
+.. _section-role-warden-client-author:
 
-Group memberships
+Author and license
 --------------------------------------------------------------------------------
 
-* **servers_monitored**
-
-  In case the target server is member of this group Nagios monitoring is automagically
-  configured for the Warden client installation.
-
-* **servers_commonenv**
-
-  In case the target server is member of this group system status script is automagically
-  configured for the Warden client installation.
-
-
-Usage and customization
---------------------------------------------------------------------------------
-
-This role is (attempted to be) written according to the `Ansible best practices <https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html>`__. The default implementation should fit most users,
-however you may customize it by tweaking default variables and providing custom
-templates.
-
-
-Variable customizations
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Most of the usefull variables are defined in ``defaults/main.yml`` file, so they
-can be easily overridden almost from `anywhere <https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable>`__.
-
-
-Template customizations
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This roles uses *with_first_found* mechanism for all of its templates. If you do
-not like anything about built-in template files you may provide your own custom
-templates. For now please see the role tasks for list of all checked paths for
-each of the template files.
-
-
-Installation
---------------------------------------------------------------------------------
-
-To install the role `honzamach.warden_client <https://galaxy.ansible.com/honzamach/warden_client>`__
-from `Ansible Galaxy <https://galaxy.ansible.com/>`__ please use variation of
-following command::
-
-    ansible-galaxy install honzamach.warden_client
-
-To install the role directly from `GitHub <https://github.com>`__ by cloning the
-`ansible-role-warden-client <https://github.com/honzamach/ansible-role-warden-client>`__
-repository please use variation of following command::
-
-    git clone https://github.com/honzamach/ansible-role-warden-client.git honzamach.warden_client
-
-Currently the advantage of using direct Git cloning is the ability to easily update
-the role when new version comes out.
-
-
-Example Playbook
---------------------------------------------------------------------------------
-
-Example content of inventory file ``inventory``::
-
-    [servers_warden_client]
-    localhost
-
-Example content of role playbook file ``playbook.yml``::
-
-    - hosts: servers_warden_client
-      remote_user: root
-      roles:
-        - role: honzamach.warden_client
-      tags:
-        - role-warden_client
-
-Example usage::
-
-    ansible-playbook -i inventory playbook.yml
-
-
-License
---------------------------------------------------------------------------------
-
-MIT
-
-
-Author Information
---------------------------------------------------------------------------------
-
-Jan Mach <jan.mach@cesnet.cz>, CESNET, a.l.e.
+| *Copyright:* (C) since 2019 Jan Mach <jan.mach@cesnet.cz>, CESNET, a.l.e.
+| *Author:* Jan Mach <jan.mach@cesnet.cz>, CESNET, a.l.e.
+| Use of this role is governed by the MIT license, see LICENSE file.
+|

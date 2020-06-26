@@ -89,6 +89,37 @@ Example usage::
     # Run everything:
     ansible-playbook --ask-vault-pass --inventory inventory role_playbook.yml
 
+It is recommended to follow these configuration principles:
+
+* Create/edit file ``inventory/group_vars/all/vars.yml`` and within define some sensible
+  defaults for all your managed servers. Example::
+
+        hm_warden_client__server_url: https://warden-hub.cesnet.cz/warden3
+        hm_warden_client__receiver_queue: "{{ hm_mentat__entry_point_queue }}"
+
+* Use files ``inventory/host_vars/[your-server]/vars.yml`` to customize settings
+  for particular servers. Please see section :ref:`section-role-postgresql-variables`
+  for all available options.
+
+        hm_warden_client__daemon_uid: 112
+        hm_warden_client__daemon_gid: 112
+        hm_warden_client__filers:
+          - domain: cesnet
+            node_name: cz.cesnet.mentat.warden_filer
+            sender_enabled: false
+            receiver_enabled: true
+            receiver_queue: /var/mentat/spool/mentat-inspector.py
+            log_to_file: true
+
+          - domain: protective
+            node_name: cz.cesnet.mentat
+            server_url: https://protective.cesnet.cz/warden_server
+            ca_cert: /etc/warden_client/warden_filer_protective/server.cert.pem
+            sender_enabled: true
+            receiver_enabled: false
+            sender_queue: /var/mentat/spool/warden_sender_protective
+            log_to_file: true
+
 
 .. _section-role-warden-client-variables:
 
